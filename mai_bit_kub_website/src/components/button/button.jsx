@@ -1,4 +1,5 @@
 import "./button.css"
+import { Link } from "react-router-dom";
 
 function base_Button(opa, stroke, text, font_color){
     return(
@@ -8,18 +9,20 @@ function base_Button(opa, stroke, text, font_color){
     );
 }
 
-function Button( {type, text}){
+function Button( {type, text, link_to}){
     if(type == "main"){
         return(
-            <div>
+            <Link to = {link_to}>
                 {base_Button(100, 0, text, "FFFBDE")}
-            </div>
+            </Link>
         );
     }
     if(type == "secondary"){
         return(
             <div>
-                {base_Button(20, 2, text, "000000")}
+                <Link to = {link_to}>
+                    {base_Button(20, 2, text, "000000")}
+                </Link>
             </div>
         );
     }

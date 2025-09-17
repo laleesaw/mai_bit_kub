@@ -26,7 +26,6 @@ function Header(){
     return(
         
         <header>
-            {/* {button(menu_first, menu_second)} */}
             <img id = "logo" src = {profilePic}></img>
             <div class = "home_button">
                 {button(home_first, home_second)}
