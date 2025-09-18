@@ -1,0 +1,33 @@
+@media (min-width: 800px){
+    .main_monitor{
+        position: relative;
+        display: flex;
+        width: 1147px;
+        height: 704px;
+        background-color:blueviolet;
+        justify-self: center;
+    }
+}
+/* @media (max-width){
+    .main_monitor{
+        position: relative;
+        display: flex;
+        width: 1075px;
+        height: 802px;
+        background-color:blueviolet;
+        justify-self: center;
+    }
+} */
+.profile{
+    width: 527px;
+    height: 391px;
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+}
+.activity{
+    width: 527px;
+    height: 391px;
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+    margin-left: 21px;
+}
