@@ -1,8 +1,7 @@
-.main_monitor{
+/* .main_monitor{
     width: 70vw;
     height: calc(100vh - 80px);
     justify-self: center;
-    /* background-color: blue; */
 }
 
 .top{
@@ -10,7 +9,6 @@
     display: flex;
     width: 100%;
     height: calc((100% / 2) - 21px);
-    /* background-color: antiquewhite; */
 }
 .profile{
     width: calc((100% / 2) - 10.5px);
@@ -84,4 +82,11 @@
     border-radius: 24px;
     margin-left: 20px;
     backdrop-filter: blur(16px);
+}
+
+.box{} */
+
+.box{
+    margin-top: 90px;
+    margin-left: 90px;
 }

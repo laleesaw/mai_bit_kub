@@ -1,3 +1,15 @@
+header{
+    display: flex;
+    height: 80px;
+    background-color: rgba(234, 91, 111, 0.08);
+    justify-content: space-between;
+}
+#logo {
+    margin-left: 35px;
+    height: 80px;
+}
+
+
 .button{
     display: flex;
     justify-content: center;
@@ -25,28 +37,17 @@
 
 
 
-
-header{
+.button_bar{
     display: flex;
-    /* height: 111px; */
-    height: 80px;
-    background-color: rgba(234, 91, 111, 0.08);
-}
-#logo {
-    margin-left: 35px;
+    justify-content: flex-end;
+    position: relative;
 }
 .notice_button{
     height: 80px;
-    position: absolute;
-    right: 252px;
 }
 .home_button{
     height: 80px;
-    position: absolute;
-    right: 126px;
 }
 .profile_button{
     height: 80px;
-    position: absolute;
-    right: 0px;
 }

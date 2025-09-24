@@ -1,29 +1,35 @@
 import "./main_page.css"
 import Profile from "../assets/profile_icon.png"
+import Blur_box from "../components/blur_box/blur_box.jsx"
+import Profile_content from "../components/blur_box/content/profile_main.jsx"
 
-function box_content(width_ratio, height_ration){
-    return(
-        <div class = "box">
-            
-        </div>
-    );
-}
+
+// function main_page(){
+//     return(
+//         <div class = "main_monitor">
+//             <div class = "top">            
+//                 <div class = "profile">
+//                     <img id = "profile_icon" src = {Profile}></img>
+//                     <div class = "username">USERNAME</div>
+//                 </div>
+//                 <div class = "activity"></div>
+//             </div>
+//             <div class = "bottom">
+//                 <div class = "friends"></div>
+//                 <div class = "available"></div>
+//             </div>
+
+//         </div>
+//     );
+// }
+// export default main_page;
 
 function main_page(){
     return(
-        <div class = "main_monitor">
-            <div class = "top">            
-                <div class = "profile">
-                    <img id = "profile_icon" src = {Profile}></img>
-                    <div class = "username">USERNAME</div>
-                </div>
-                <div class = "activity"></div>
-            </div>
-            <div class = "bottom">
-                <div class = "friends"></div>
-                <div class = "available"></div>
-            </div>
-
+        <div class = "box">
+            <Blur_box width = {2} height = {2}>
+                <Profile_content></Profile_content>
+            </Blur_box>
         </div>
     );
 }

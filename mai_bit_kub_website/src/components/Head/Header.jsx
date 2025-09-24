@@ -9,7 +9,7 @@ import notice_second from '../../assets/notice_second.png'
 import profile_first from '../../assets/profile_first.png'
 import profile_second from '../../assets/profile_second.png'
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
-import Home from '../../pages/Home.jsx'
+import Main_page from '../../pages/main_page.jsx'
 
 
 function button(first, second){
@@ -26,12 +26,15 @@ function Header(){
     return(
         
         <header>
-            <img id = "logo" src = {profilePic}></img>
-            <div class = "home_button">
-                {button(home_first, home_second)}
-                <Link to="/Home"></Link></div>
-            <div class = "notice_button">{button(notice_first, notice_second)}</div>
-            <div class = "profile_button">{button(profile_first, profile_second)}</div>
+            <div className = "logo"><img id = "logo" src = {profilePic}></img></div>
+            <div className = 'button_bar'>
+                <div className = "home_button">
+                    {button(home_first, home_second)}
+                    <Link to="/Main_page"></Link>
+                </div>
+                <div className = "notice_button">{button(notice_first, notice_second)}</div>
+                <div className = "profile_button">{button(profile_first, profile_second)}</div>
+            </div>
 
 
         </header>
