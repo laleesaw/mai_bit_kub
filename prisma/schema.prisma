@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id    Int       @id @default(autoincrement())
+  email      String    @unique
+  password   String
+  name       String
+  created_at DateTime  @default(now())
+
+  groups_created Group[]       @relation("GroupCreator")
+  group_members  GroupMember[]
+  availabilities Availability[]
+  user_activities UserActivity[]
+  budgets        Budget[]
+}
+
+model Group {
+  group_id    Int       @id @default(autoincrement())
+  group_name  String
+  max_members Int
+  created_by  Int
+  created_at  DateTime  @default(now())
+
+  creator     User      @relation("GroupCreator", fields: [created_by], references: [user_id])
+  members     GroupMember[]
+  availabilities Availability[]
+}
+
+model GroupMember {
+  user_id    Int
+  group_id   Int
+  role       String?
+  created_at DateTime @default(now())
+
+  user  User  @relation(fields: [user_id], references: [user_id])
+  group Group @relation(fields: [group_id], references: [group_id])
+
+  @@id([user_id, group_id])
+}
+
+model Availability {
+  availability_id Int      @id @default(autoincrement())
+  start_datetime  DateTime
+  end_datetime    DateTime
+  note            String?
+  user_id         Int
+  group_id        Int
+
+  user  User  @relation(fields: [user_id], references: [user_id])
+  group Group @relation(fields: [group_id], references: [group_id])
+}
+
+model Activity {
+  activity_id   Int       @id @default(autoincrement())
+  activity_name String
+  cost          Float
+  category      String
+  user_activities UserActivity[]
+}
+
+model UserActivity {
+  user_id         Int
+  activity_id     Int
+  preference_level Int
+
+  user     User     @relation(fields: [user_id], references: [user_id])
+  activity Activity @relation(fields: [activity_id], references: [activity_id])
+
+  @@id([user_id, activity_id])
+}
+
+model Budget {
+  budget_id  Int     @id @default(autoincrement())
+  user_id    Int
+  max_budget Float
+
+  user User @relation(fields: [user_id], references: [user_id])
+}
