@@ -2,6 +2,7 @@ import "./main_page.css"
 import Profile from "../assets/profile_icon.png"
 import Blur_box from "../components/blur_box/blur_box.jsx"
 import Profile_content from "../components/blur_box/content/profile_main.jsx"
+import Activity_content from "../components/blur_box/content/activity_main.jsx"
 
 
 // function main_page(){
@@ -29,6 +30,9 @@ function main_page(){
         <div class = "box">
             <Blur_box width = {2} height = {2}>
                 <Profile_content></Profile_content>
+            </Blur_box>
+            <Blur_box width = {2} height = {2}>
+                <Activity_content></Activity_content>
             </Blur_box>
         </div>
     );
