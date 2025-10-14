@@ -1,0 +1,53 @@
+header{
+    display: flex;
+    height: 80px;
+    background-color: rgba(234, 91, 111, 0.08);
+    justify-content: space-between;
+}
+#logo {
+    margin-left: 35px;
+    height: 80px;
+}
+
+
+.button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 124px;
+    height: 100%;
+    cursor: pointer;
+}
+#second{
+    position: absolute;
+    opacity:0%;
+}
+.button:hover{
+    background-color: #EA5B6F;
+}
+.button:hover #first{
+ opacity: 0%;
+}
+.button:hover #second{
+ opacity: 100%;
+}
+
+
+
+
+
+.button_bar{
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+}
+.notice_button{
+    height: 80px;
+}
+.home_button{
+    height: 80px;
+}
+.profile_button{
+    height: 80px;
+}

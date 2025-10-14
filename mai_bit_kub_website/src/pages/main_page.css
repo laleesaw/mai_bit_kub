@@ -1,0 +1,92 @@
+/* .main_monitor{
+    width: 70vw;
+    height: calc(100vh - 80px);
+    justify-self: center;
+}
+
+.top{
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: calc((100% / 2) - 21px);
+}
+.profile{
+    width: calc((100% / 2) - 10.5px);
+    height: calc(100%);
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+    backdrop-filter: blur(16px);
+    cursor: pointer;
+    transition: background-color 0.5s;
+}
+#profile_icon{
+    height: 60%;
+    opacity: 0.56;
+    position: relative;
+    display: flex;
+    justify-self: center;
+    margin-top: 29px;
+    transition: opacity 0.5s;
+}
+.username{
+    width: 272px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: rgba(255, 251, 222, 0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 32px;
+    transition: background-color 0.5s;
+}
+.profile:hover{
+    background-color:rgba(234, 91, 111, 0.5);
+}
+.profile:hover #profile_icon{
+    opacity: 100%;
+}
+.profile:hover .username{
+    background-color: rgba(255, 251, 222, 0.56);
+
+}
+.activity{
+    width: calc((100% / 2) - 10.5px);
+    height: calc(100%);
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+    margin-left: 21px;
+    backdrop-filter: blur(16px);
+}
+.bottom{
+    margin-top: 21px;
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: calc((100% / 2) - 21px);
+}
+.friends{
+    width: calc((100% / 6) - 10.5px);
+    height: calc(100%);
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+    margin-left: 0px;
+    backdrop-filter: blur(16px);
+}
+.available{
+    width: calc((100vw / (8/6)) - 10.5px);
+    height: calc(100%);
+    background-color: rgba(234, 91, 111, 0.16);
+    border-radius: 24px;
+    margin-left: 20px;
+    backdrop-filter: blur(16px);
+}
+
+.box{} */
+
+.box{
+    margin-top: 90px;
+    margin-left: 90px;
+}
