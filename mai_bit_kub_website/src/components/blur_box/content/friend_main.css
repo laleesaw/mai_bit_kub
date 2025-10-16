@@ -1,0 +1,9 @@
+.profile_friend{
+    justify-self: center;
+    display:grid;
+}
+.profile_friend img{
+    width: 60px;
+    height: 60px;
+    margin-top: 20px;
+}

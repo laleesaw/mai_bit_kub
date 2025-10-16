@@ -1,7 +1,14 @@
 .display{
+    justify-items: center;
+    font-size: 32px;
+    font-weight: bold;
+}
+.activity_icon{
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 20px;
+    column-gap: 10px;
 }
 
 
