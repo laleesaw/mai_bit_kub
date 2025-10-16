@@ -19,6 +19,8 @@ model User {
   availabilities Availability[]
   user_activities UserActivity[]
   budgets        Budget[]
+  sent_friend_requests     Friendship[] @relation("UserFriends")
+  received_friend_requests Friendship[] @relation("FriendOfUser")
 }
 
 model Group {
@@ -82,4 +84,17 @@ model Budget {
   max_budget Float
 
   user User @relation(fields: [user_id], references: [user_id])
+}
+
+model Friendship {
+  user_id      Int
+  friend_id    Int
+  status       String   // pending, accepted, blocked
+  requested_at DateTime @default(now())
+  responded_at DateTime?
+
+  user   User @relation("UserFriends", fields: [user_id], references: [user_id])
+  friend User @relation("FriendOfUser", fields: [friend_id], references: [user_id])
+
+  @@id([user_id, friend_id])
 }
