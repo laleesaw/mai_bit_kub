@@ -1,3 +1,55 @@
+/* Profile info and logout button styling */
+
+/* Profile dropdown styling */
+.profile_button {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    min-width: 140px;
+    background: rgba(234, 91, 111, 0.5);
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    padding: 16px 18px 12px 18px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    animation: fadeInProfile 0.18s;
+}
+
+@keyframes fadeInProfile {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-dropdown .username {
+    font-size: 1.08rem;
+    color: #2d3a4a;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.profile-dropdown .logout-btn {
+    background: #ff3f3f;
+    color: hsl(0, 0%, 0%);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.5s;
+    margin-top: 2px;
+}
+.profile-dropdown .logout-btn:hover {
+    background: #d32f2f;
+}
 header{
     display: flex;
     height: 80px;
@@ -32,10 +84,6 @@ header{
 .button:hover #second{
  opacity: 100%;
 }
-
-
-
-
 
 .button_bar{
     display: flex;

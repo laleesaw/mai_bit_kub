@@ -22,6 +22,12 @@ function SignIn() {
             const data = await res.json();
 
             if (res.ok) {
+                // Save token and username to localStorage
+                if (data.user && data.user.name) {
+                    localStorage.setItem('username', data.user.name);
+                }
+                // (Optional) Save token if you implement JWT
+                // localStorage.setItem('token', data.token);
                 alert("Login successful!");
                 navigate("/main_page"); // ไปหน้า main
             } else {

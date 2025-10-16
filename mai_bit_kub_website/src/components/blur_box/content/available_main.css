@@ -1,4 +1,4 @@
-/* .img-checkbox {
+/* /* /* .img-checkbox {
   position: relative;
   display: inline-block;
   cursor: pointer;
@@ -20,8 +20,6 @@
 .img-checkbox input:checked ~ .checked {
   display: inline;
 } */
-
-
 
 .calendar-wrapper {
   width: 90%;
@@ -105,5 +103,5 @@
   font-size: 12px;
   font-weight: 1px;
   color: black;
-  pointer-events: none; /* ให้คลิกทะลุตัวเลขได้ */
-}
+  pointer-events: none; 
+}  

@@ -28,18 +28,18 @@
 
 import React from "react";
 import "./available_main.css";
-import Avai_icon from "../../../assets/available.png";
-import Unavai_icon from "../../../assets/unavailable.png";
+// import Avai_icon from "../../../assets/available.png";
+// import Unavai_icon from "../../../assets/unavailable.png";
 
 function Checkbox({ dayNumber }) {
   return (
     <label className="img-checkbox">
-      <input type="checkbox" />
+      {/* <input type="checkbox" />
       <div className="img-wrapper">
         <img src={Unavai_icon} className="unchecked" alt="Unavailable" />
         <img src={Avai_icon} className="checked" alt="Available" />
         <span className="date-num">{dayNumber}</span>
-      </div>
+      </div> */}
     </label>
   );
 }
@@ -50,7 +50,7 @@ function Available() {
 
   return (
     <div className="calendar-wrapper">
-      <div className="calendar-header">
+      {/* <div className="calendar-header">
         {daysHeader.map((day, index) => (
           <div key={index} className="day-header">
             {day}
@@ -62,7 +62,7 @@ function Available() {
         {[...Array(totalDays)].map((_, index) => (
           <Checkbox key={index} dayNumber={index + 1} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
