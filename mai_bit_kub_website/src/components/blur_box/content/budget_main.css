@@ -1,12 +1,19 @@
 .budget{
-    padding-top: 2.5%;
+    /* background-color: aqua; */
+
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 .budget img{
-    width: 175px;
+    width: 150px;
 }
 .amount{
     display: flex;
