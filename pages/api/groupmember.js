@@ -1,40 +1,77 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+// helper: serialize groupMember
+function serializeGroupMember(member) {
+  return {
+    user_id: member.user_id,
+    group_id: member.group_id,
+    role: member.role,
+    user: member.user ? { user_id: member.user.user_id, name: member.user.name, email: member.user.email } : null,
+    group: member.group ? { group_id: member.group.group_id, name: member.group.name } : null,
+  };
+}
+
 export default async function handler(req, res) {
+  // --- CORS headers ---
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // --- Preflight request ---
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     switch(req.method) {
-      case "GET":
+      case "GET": {
         const members = await prisma.groupMember.findMany({ include: { user: true, group: true } });
-        return res.status(200).json(members);
+        return res.status(200).json(members.map(serializeGroupMember));
+      }
 
-      case "POST":
+      case "POST": {
         const { user_id, group_id, role } = req.body;
+        if (!user_id || !group_id || !role) {
+          return res.status(400).json({ message: "Missing user_id, group_id, or role" });
+        }
         const newMember = await prisma.groupMember.create({
           data: { user_id, group_id, role },
         });
-        return res.status(201).json(newMember);
+        const fullMember = await prisma.groupMember.findUnique({
+          where: { user_id_group_id: { user_id, group_id } },
+          include: { user: true, group: true }
+        });
+        return res.status(201).json(serializeGroupMember(fullMember));
+      }
 
-      case "PUT":
-        const { user_id: uId, group_id: gId, role: newRole } = req.body;
+      case "PUT": {
+        const { user_id, group_id, role } = req.body;
+        if (!user_id || !group_id || !role) {
+          return res.status(400).json({ message: "Missing user_id, group_id, or role" });
+        }
         const updatedMember = await prisma.groupMember.update({
-          where: { user_id_group_id: { user_id: uId, group_id: gId } },
-          data: { role: newRole },
+          where: { user_id_group_id: { user_id, group_id } },
+          data: { role },
+          include: { user: true, group: true }
         });
-        return res.status(200).json(updatedMember);
+        return res.status(200).json(serializeGroupMember(updatedMember));
+      }
 
-      case "DELETE":
-        const { user_id: delU, group_id: delG } = req.body;
-        await prisma.groupMember.delete({
-          where: { user_id_group_id: { user_id: delU, group_id: delG } },
-        });
+      case "DELETE": {
+        const { user_id, group_id } = req.body;
+        if (!user_id || !group_id) {
+          return res.status(400).json({ message: "Missing user_id or group_id" });
+        }
+        await prisma.groupMember.delete({ where: { user_id_group_id: { user_id, group_id } } });
         return res.status(200).json({ message: "Group member deleted" });
+      }
 
       default:
         return res.status(405).json({ message: "Method Not Allowed" });
     }
   } catch(err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error in /api/groupMember:", err);
+    return res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 }
