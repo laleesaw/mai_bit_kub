@@ -6,7 +6,7 @@
     flex-direction: column;
 }
 .profile img{
-    width: 30%;
+    width: 175px;
 }
 .username{
     display: flex;
