@@ -26,17 +26,16 @@ function Header(){
     return(
         
         <header>
-            <div className = "logo"><img id = "logo" src = {profilePic}></img></div>
-            <div className = 'button_bar'>
-                <div className = "home_button">
+            <Link to="/" className="logo">
+                <img id="logo" src={profilePic} alt="Logo" />
+            </Link>
+            <div className='button_bar'>
+                <Link to="/" className="home_button">
                     {button(home_first, home_second)}
-                    <Link to="/Main_page"></Link>
-                </div>
-                <div className = "notice_button">{button(notice_first, notice_second)}</div>
-                <div className = "profile_button">{button(profile_first, profile_second)}</div>
+                </Link>
+                <div className="notice_button">{button(notice_first, notice_second)}</div>
+                <div className="profile_button">{button(profile_first, profile_second)}</div>
             </div>
-
-
         </header>
     )
 }
