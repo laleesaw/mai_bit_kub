@@ -9,6 +9,11 @@
     transform: translate(-50%, -50%);
 }
 .activity_icon{
+    width: 100%;              /* กำหนดความกว้าง */
+    overflow-x: auto;          /* เปิด scroll แนวนอน */
+    white-space: nowrap;
+    
+    
     display: flex;
     justify-content: center;
     align-items: center;

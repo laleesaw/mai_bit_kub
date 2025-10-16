@@ -3,6 +3,11 @@ import Pingpong_icon from "../../../assets/pingpong.png"
 import Boxing_icon from "../../../assets/boxing.png"
 import Add_activity_icon from "../../../assets/add_activity.png"
 
+// function container_activity(){
+//     return(
+
+//     );
+// }
 
 function Activity(){
     return(
@@ -18,6 +23,9 @@ function Activity(){
                 <div>
                     <img src = {Add_activity_icon}></img>           
                 </div>          
+                <div>
+                    <img src = {Add_activity_icon}></img>           
+                </div>    
             </div>
             <div className = "activity_name">BOXING</div>
 
