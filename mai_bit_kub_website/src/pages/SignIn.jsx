@@ -34,7 +34,7 @@ function SignIn() {
                     
                     // อัพเดท toast เป็นสำเร็จ
                     toast.update(loadingToast, {
-                        render: "Welcome back! 👋",
+                        render: "Welcome! 👋",
                         type: "success",
                         isLoading: false,
                         autoClose: 2000
