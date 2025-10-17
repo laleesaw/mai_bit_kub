@@ -175,3 +175,21 @@
     padding: 32px 16px;
   }
 }
+
+/* Custom Toast Styles */
+.Toastify__toast {
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.Toastify__toast--success {
+    background: #4CAF50;
+}
+
+.Toastify__toast--error {
+    background: #f44336;
+}
+
+.Toastify__toast--loading {
+    background: #2196F3;
+}

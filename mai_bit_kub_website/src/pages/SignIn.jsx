@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./SignIn.css";
 import logo from "../assets/logo_mai_bit_kub.png";
 
@@ -12,6 +14,9 @@ function SignIn() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // แสดง loading toast
+        const loadingToast = toast.loading("Signing in...");
+
         try {
             const res = await fetch("http://localhost:3000/api/login", {
                 method: "POST",
@@ -22,25 +27,59 @@ function SignIn() {
             const data = await res.json();
 
             if (res.ok) {
-                // Save token and username to localStorage
                 if (data.user && data.user.name) {
                     localStorage.setItem('username', data.user.name);
+                    localStorage.setItem('userId', data.user.user_id);
+                    localStorage.setItem('isAuthenticated', 'true');
+                    
+                    // อัพเดท toast เป็นสำเร็จ
+                    toast.update(loadingToast, {
+                        render: "Welcome back! 👋",
+                        type: "success",
+                        isLoading: false,
+                        autoClose: 2000
+                    });
+                    
+                    // รอให้ toast แสดงเสร็จแล้วค่อย navigate
+                    setTimeout(() => {
+                        navigate("/main_page");
+                    }, 1000);
                 }
-                // (Optional) Save token if you implement JWT
-                // localStorage.setItem('token', data.token);
-                alert("Login successful!");
-                navigate("/main_page"); // ไปหน้า main
             } else {
-                alert(data.message || "Login failed");
+                // อัพเดท toast เป็น error
+                toast.update(loadingToast, {
+                    render: data.message || "Invalid username or password",
+                    type: "error",
+                    isLoading: false,
+                    autoClose: 3000
+                });
             }
         } catch (err) {
             console.error("Login fetch error:", err);
-            alert("Something went wrong. Please try again.");
+            // อัพเดท toast เป็น error
+            toast.update(loadingToast, {
+                render: "Connection error. Please try again.",
+                type: "error",
+                isLoading: false,
+                autoClose: 3000
+            });
         }
     };
 
     return (
         <div className="sign-bg">
+            <ToastContainer 
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
             <div className="sign-container fade-in">
                 <div className="sign-left">
                     <img src={logo} alt="Mai Bit Kub Logo" className="sign-logo" />
