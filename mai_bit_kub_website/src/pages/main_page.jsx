@@ -1,16 +1,11 @@
 import "./main_page.css"
-<<<<<<< HEAD
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-=======
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
 import Blur_box from "../components/blur_box/blur_box.jsx"
 import Budget_content from "../components/blur_box/content/budget_main.jsx"
 import Activity_content from "../components/blur_box/content/activity_main.jsx"
 import Friend_content from "../components/blur_box/content/friend_main.jsx"
 import Avai_content from "../components/blur_box/content/available_main.jsx"
-<<<<<<< HEAD
-=======
 
 
 
@@ -33,7 +28,6 @@ import Avai_content from "../components/blur_box/content/available_main.jsx"
 //     );
 // }
 // export default main_page;
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
 
 function main_page(){
     const navigate = useNavigate();
@@ -50,11 +44,8 @@ function main_page(){
         <div class = "box">
             <div className = "top">
                 <Blur_box width = {2} height = {2}>
-<<<<<<< HEAD
                     <Profile_content></Profile_content>
-=======
                     <Budget_content></Budget_content>
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
                 </Blur_box>
                 <Blur_box width = {2} height = {2}>
                     <Activity_content></Activity_content>

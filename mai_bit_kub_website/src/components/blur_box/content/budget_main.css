@@ -12,13 +12,11 @@
     align-items: center;
     flex-direction: column;
 }
-<<<<<<< HEAD:mai_bit_kub_website/src/components/blur_box/content/profile_main.css
 .profile img{
     width: 175px;
-=======
+}
 .budget img{
     width: 150px;
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad:mai_bit_kub_website/src/components/blur_box/content/budget_main.css
 }
 .amount{
     display: flex;

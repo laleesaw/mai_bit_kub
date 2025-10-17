@@ -14,7 +14,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-<<<<<<< HEAD
         <Route
           path="/main_page"
           element={
@@ -23,9 +22,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-=======
-        <Route path="/main_page" element={<Main_page />} />
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
       </Routes>
     </Router>
   );

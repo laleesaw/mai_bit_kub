@@ -1,8 +1,6 @@
 .profile_friend{
     justify-self: center;
     display:grid;
-<<<<<<< HEAD
-=======
 
     position: absolute;
     top: 50%;
@@ -10,13 +8,9 @@
     transform: translate(-50%, -50%);
 
     row-gap: 20px;
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
 }
 .profile_friend img{
     width: 60px;
     height: 60px;
-<<<<<<< HEAD
     margin-top: 20px;
-=======
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
 }

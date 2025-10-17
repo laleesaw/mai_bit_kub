@@ -2,14 +2,12 @@
     justify-items: center;
     font-size: 32px;
     font-weight: bold;
-<<<<<<< HEAD
 }
 .activity_icon{
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-=======
 
     position: absolute;
     top: 50%;
@@ -25,7 +23,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
->>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad
     column-gap: 10px;
 }
 
