@@ -1,14 +1,26 @@
-.profile{
-    padding-top: 2.5%;
+.budget{
+    /* background-color: aqua; */
+
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+<<<<<<< HEAD:mai_bit_kub_website/src/components/blur_box/content/profile_main.css
 .profile img{
     width: 175px;
+=======
+.budget img{
+    width: 150px;
+>>>>>>> 153c70e98a9e9b7819a23ddd33c6a475b926bdad:mai_bit_kub_website/src/components/blur_box/content/budget_main.css
 }
-.username{
+.amount{
     display: flex;
     width: 272px;
     height: 50px;
