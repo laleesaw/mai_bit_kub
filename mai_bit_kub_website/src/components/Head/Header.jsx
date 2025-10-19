@@ -1,5 +1,8 @@
 import './Header.css'
 import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 import menu_first from '../../assets/menu.png'
 import menu_second from '../../assets/menu_second.png'
 import profilePic from '../../assets/logo_mai_bit_kub.png'
@@ -9,30 +12,28 @@ import notice_first from '../../assets/notice_first.png'
 import notice_second from '../../assets/notice_second.png'
 import profile_first from '../../assets/profile_first.png'
 import profile_second from '../../assets/profile_second.png'
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom"
-import Main_page from '../../pages/main_page.jsx'
-
 
 function button(first, second){
     return(
-        <div className = "button">
-            <img id = "first" src = {first}></img>
-            <img id = "second" src = {second}></img>
+        <div className="button">
+            <img id="first" src={first} alt="" />
+            <img id="second" src={second} alt="" />
         </div>
     );
 }
 
 function Header(){
-    
 
-    // Get username from localStorage
     const username = localStorage.getItem('username');
     const isSignedIn = !!username;
 
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const profileRef = useRef(null);
     const navigate = useNavigate();
-    // Logout handler: remove token and username, then redirect to home
+    const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+    const [maxMembers, setMaxMembers] = useState(10);
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
@@ -40,7 +41,37 @@ function Header(){
         navigate('/');
     };
 
-    // Close dropdown if click outside
+    const handleCreateGroup = async (e) => {
+        e.preventDefault();
+        try {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                toast.error('Please login first');
+                return;
+            }
+
+            const res = await fetch('http://localhost:3000/api/group', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    group_name: newGroupName,
+                    max_members: parseInt(maxMembers),
+                    created_by: parseInt(userId)
+                })
+            });
+
+            if (!res.ok) throw new Error('Failed to create group');
+
+            toast.success('Group created successfully!');
+            setNewGroupName('');
+            setMaxMembers(10);
+            setShowCreateGroup(false);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to create group');
+        }
+    };
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -55,29 +86,85 @@ function Header(){
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showProfileMenu]);
 
-    return(
+    return (
         <header>
+            {/* Logo */}
             <Link to="/" className="logo">
                 <img id="logo" src={profilePic} alt="Logo" />
             </Link>
-            <div className='button_bar'>
-                <Link to="/" className="home_button">
-                    {button(home_first, home_second)}
-                </Link>
+
+            {/* ปุ่มด้านขวา */}
+            <div className="button_bar">
+                {isSignedIn && (
+                    <button 
+                        className="create-group-btn"
+                        onClick={() => setShowCreateGroup(true)}
+                    >
+                        Create Group
+                    </button>
+                )}
+                <Link to="/" className="home_button">{button(home_first, home_second)}</Link>
                 <div className="notice_button">{button(notice_first, notice_second)}</div>
-                <div className="profile_button" ref={profileRef}>
-                    <div onClick={() => isSignedIn && setShowProfileMenu((v) => !v)} style={{cursor: isSignedIn ? 'pointer' : 'default'}}>
-                        {button(profile_first, profile_second)}
-                    </div>
-                    {isSignedIn && showProfileMenu && (
-                        <div className="profile-dropdown">
-                            <span className="username">{username}</span>
-                            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+
+                {/* ปุ่มโปรไฟล์ */}
+                {isSignedIn && (
+                    <div className="profile_button" ref={profileRef}>
+                        <div 
+                            onClick={() => setShowProfileMenu((v) => !v)}
+                            style={{cursor: 'pointer'}}
+                        >
+                            {button(profile_first, profile_second)}
                         </div>
-                    )}
-                </div>
+                        {showProfileMenu && (
+                            <div className="profile-dropdown">
+                                <Link to="/edit-profile" className="username-link">
+                                    {username}
+                                </Link>
+                                <button className="logout-btn" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
+
+            {/* Modal สร้างกลุ่ม */}
+            {showCreateGroup && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Create New Group</h2>
+                        <form onSubmit={handleCreateGroup}>
+                            <div className="form-group">
+                                <label>Group Name:</label>
+                                <input
+                                    type="text"
+                                    value={newGroupName}
+                                    onChange={(e) => setNewGroupName(e.target.value)}
+                                    placeholder="Enter group name"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Max Members:</label>
+                                <input
+                                    type="number"
+                                    value={maxMembers}
+                                    onChange={(e) => setMaxMembers(e.target.value)}
+                                    min="2"
+                                    max="50"
+                                />
+                            </div>
+                            <div className="modal-buttons">
+                                <button type="submit">Create</button>
+                                <button type="button" onClick={() => setShowCreateGroup(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </header>
-    )
+    );
 }
-export default Header
+
+export default Header;

@@ -88,3 +88,25 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 }
+
+// ส่งข้อมูลไปบันทึก
+const response = await fetch('http://localhost:3000/api/availability', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        user_id: parseInt(userId),
+        group_id: 1, // ตรวจสอบว่า group_id นี้มีอยู่จริงในฐานข้อมูล
+        start_datetime: startDateTime.toISOString(),
+        end_datetime: endDateTime.toISOString(),
+        note: "" // เพิ่ม note เป็นค่าว่าง
+    })
+});
+
+// เพิ่มการ log error detail
+if (!response.ok) {
+    const errorData = await response.json();
+    console.error('API Error:', errorData);
+    throw new Error(errorData.message || 'Failed to save availability');
+}
