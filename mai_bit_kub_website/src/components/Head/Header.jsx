@@ -1,6 +1,6 @@
 import './Header.css'
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 import menu_first from '../../assets/menu.png'
@@ -26,6 +26,8 @@ function Header(){
 
     const username = localStorage.getItem('username');
     const isSignedIn = !!username;
+    const location = useLocation();
+    const isMainPage = location.pathname === '/main_page';
 
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const profileRef = useRef(null);
@@ -95,7 +97,7 @@ function Header(){
 
             {/* ปุ่มด้านขวา */}
             <div className="button_bar">
-                {isSignedIn && (
+                {isSignedIn && isMainPage && (
                     <button 
                         className="create-group-btn"
                         onClick={() => setShowCreateGroup(true)}
