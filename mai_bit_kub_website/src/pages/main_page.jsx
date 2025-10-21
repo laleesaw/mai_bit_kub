@@ -6,6 +6,7 @@ import Budget_content from "../components/blur_box/content/budget_main.jsx"
 import Activity_content from "../components/blur_box/content/activity_main.jsx"
 import Friend_content from "../components/blur_box/content/friend_main.jsx"
 import Avai_content from "../components/blur_box/content/available_main.jsx"
+import GroupList from "../components/GroupList/GroupList.jsx"
 
 function main_page(){
     const navigate = useNavigate();
@@ -18,22 +19,27 @@ function main_page(){
     }, [navigate]);
 
     return(
-        <div className="box">
-            <div className="top">
-                <Blur_box width={2} height={2}>
-                    <Budget_content />
-                </Blur_box>
-                <Blur_box width={2} height={2}>
-                    <Activity_content />
-                </Blur_box>
+        <div className="main-layout">
+            <div className="sidebar">
+                <GroupList />
             </div>
-            <div className="bottom">
-                <Blur_box width={8} height={2}>
-                    <Friend_content />
-                </Blur_box>
-                <Blur_box width={1.145} height={2}>
-                    <Avai_content />
-                </Blur_box>
+            <div className="main-content">
+                <div className="top">
+                    <Blur_box width={2} height={2}>
+                        <Budget_content />
+                    </Blur_box>
+                    <Blur_box width={2} height={2}>
+                        <Activity_content />
+                    </Blur_box>
+                </div>
+                <div className="bottom">
+                    <Blur_box width={8} height={2}>
+                        <Friend_content />
+                    </Blur_box>
+                    <Blur_box width={1.145} height={2}>
+                        <Avai_content />
+                    </Blur_box>
+                </div>
             </div>
         </div>
     );

@@ -45,8 +45,26 @@ export default async function handler(req, res) {
         if (!group_name || !max_members || !created_by) {
           return res.status(400).json({ message: "Missing group_name, max_members, or created_by" });
         }
-        const newGroup = await prisma.group.create({
-          data: { group_name, max_members, created_by },
+        // Create group and add creator as a member in a transaction
+        const newGroup = await prisma.$transaction(async (prisma) => {
+          const group = await prisma.group.create({
+            data: { 
+              group_name, 
+              max_members, 
+              created_by 
+            },
+          });
+
+          // Add creator as a member with 'admin' role
+          await prisma.groupMember.create({
+            data: {
+              user_id: created_by,
+              group_id: group.group_id,
+              role: 'admin'
+            }
+          });
+
+          return group;
         });
         const fullGroup = await prisma.group.findUnique({
           where: { group_id: newGroup.group_id },
