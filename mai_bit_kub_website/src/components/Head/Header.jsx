@@ -105,7 +105,17 @@ function Header(){
                         Create Group
                     </button>
                 )}
-                <Link to="/" className="home_button">{button(home_first, home_second)}</Link>
+                <div 
+                    onClick={() => {
+                        if (isSignedIn) {
+                            navigate('/main_page');
+                        }
+                    }} 
+                    className="home_button" 
+                    style={{ cursor: isSignedIn ? 'pointer' : 'default' }}
+                >
+                    {button(home_first, home_second)}
+                </div>
                 <div className="notice_button">{button(notice_first, notice_second)}</div>
 
                 {/* ปุ่มโปรไฟล์ */}
