@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import cors from './middleware/cors';
 const prisma = new PrismaClient();
 
 function serializeUser(user) {
@@ -33,12 +34,9 @@ function serializeUser(user) {
 }
 
 export default async function handler(req, res) {
-  // --- CORS headers ---
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,DELETE,OPTIONS"
-  );
+  // Handle CORS preflight
+  if (cors(req, res)) return;
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {

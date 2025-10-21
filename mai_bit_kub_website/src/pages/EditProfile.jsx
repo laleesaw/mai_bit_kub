@@ -5,11 +5,13 @@ import './EditProfile.css';
 
 function EditProfile() {
     const navigate = useNavigate();
+    const [initialData, setInitialData] = useState({
+        name: '',
+        email: ''
+    });
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         email: '',
-        firstName: '',
-        lastName: '',
         currentPassword: '',
         newPassword: '',
         confirmNewPassword: ''
@@ -34,12 +36,14 @@ function EditProfile() {
                 if (!response.ok) throw new Error('Failed to fetch user data');
 
                 const userData = await response.json();
+                const initialValues = {
+                    name: userData.name || '',
+                    email: userData.email || ''
+                };
+                setInitialData(initialValues);
                 setFormData(prevState => ({
                     ...prevState,
-                    username: userData.username || '',
-                    email: userData.email || '',
-                    firstName: userData.first_name || '',
-                    lastName: userData.last_name || ''
+                    ...initialValues
                 }));
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -61,16 +65,39 @@ function EditProfile() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate password fields if user is trying to change password
-        if (formData.newPassword || formData.confirmNewPassword) {
-            if (!formData.currentPassword) {
-                toast.error('Please enter your current password');
-                return;
-            }
+        const updateData = {};
+        let hasChanges = false;
+
+        // Check if name has changed
+        if (formData.name !== initialData.name) {
+            updateData.name = formData.name;
+            hasChanges = true;
+        }
+
+        // Check if email has changed
+        if (formData.email !== initialData.email) {
+            updateData.email = formData.email;
+            hasChanges = true;
+        }
+
+        // Check for password change
+        if (formData.newPassword) {
             if (formData.newPassword !== formData.confirmNewPassword) {
                 toast.error('New passwords do not match');
                 return;
             }
+            if (!formData.currentPassword) {
+                toast.error('Current password is required to change password');
+                return;
+            }
+            updateData.current_password = formData.currentPassword;
+            updateData.new_password = formData.newPassword;
+            hasChanges = true;
+        }
+
+        if (!hasChanges) {
+            toast.info('No changes detected');
+            return;
         }
 
         try {
@@ -81,14 +108,7 @@ function EditProfile() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify({
-                    username: formData.username,
-                    email: formData.email,
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
-                    current_password: formData.currentPassword,
-                    new_password: formData.newPassword
-                })
+                body: JSON.stringify(updateData)
             });
 
             if (!response.ok) throw new Error('Failed to update profile');
@@ -106,14 +126,13 @@ function EditProfile() {
             <h2 className="edit-profile-title">Edit Profile</h2>
             <form onSubmit={handleSubmit} className="edit-profile-form">
                 <div className="form-input-group">
-                    <label htmlFor="username">Username</label>
+                    <label htmlFor="name">Name</label>
                     <input
                         type="text"
-                        id="username"
-                        name="username"
-                        value={formData.username}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
-                        required
                     />
                 </div>
 
@@ -124,29 +143,6 @@ function EditProfile() {
                         id="email"
                         name="email"
                         value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-
-                <div className="form-input-group">
-                    <label htmlFor="firstName">First Name</label>
-                    <input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div className="form-input-group">
-                    <label htmlFor="lastName">Last Name</label>
-                    <input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
                         onChange={handleChange}
                     />
                 </div>
