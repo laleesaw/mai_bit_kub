@@ -52,6 +52,40 @@ export default async function handler(req, res) {
 
   try {
     switch (req.method) {
+      case "POST": {
+        const { email, name, password } = req.body;
+        
+        // Validate required fields
+        if (!email || !name || !password) {
+          return res.status(400).json({ error: "All fields are required" });
+        }
+
+        try {
+          // Check if email already exists
+          const existingUser = await prisma.user.findUnique({
+            where: { email }
+          });
+
+          if (existingUser) {
+            return res.status(400).json({ error: "Email already exists" });
+          }
+
+          // Create new user
+          const newUser = await prisma.user.create({
+            data: {
+              email,
+              name,
+              password  // In production, you should hash the password
+            }
+          });
+
+          return res.status(201).json(serializeUser(newUser));
+        } catch (error) {
+          console.error('Error creating user:', error);
+          return res.status(500).json({ error: "Failed to create user" });
+        }
+      }
+
       case "GET": {
         const users = await prisma.user.findMany({
           include: {
