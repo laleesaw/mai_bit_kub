@@ -4,7 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import "./available_main.css";
 
 function Available() {
-  // เดือนปัจจุบัน (สำหรับ activeStartDate และปุ่มเลื่อนเดือน)
+  // เดือนปัจจุบัน
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // เก็บวันที่เลือกหลายวัน
@@ -21,14 +21,16 @@ function Available() {
 
   // เลือกวัน
   const handleDayClick = (date) => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toLocaleDateString("en-CA"); // YYYY-MM-DD
     setCurrentDate(dateStr);
 
     setSelectedDates((prev) => {
       if (prev.includes(dateStr)) {
-        return prev.filter((d) => d !== dateStr); // ยกเลิกวัน
+        // ถ้ายกเลิกวัน และวันนั้นเป็น currentDate → รีเซ็ต currentDate เป็น null
+        if (currentDate === dateStr) setCurrentDate(null);
+        return prev.filter((d) => d !== dateStr);
       } else {
-        return [...prev, dateStr]; // เลือกวันใหม่
+        return [...prev, dateStr];
       }
     });
   };
@@ -78,8 +80,10 @@ function Available() {
             activeStartDate={currentMonth}
             onActiveStartDateChange={({ activeStartDate }) => setCurrentMonth(activeStartDate)}
             tileClassName={({ date }) => {
-              const dateStr = date.toISOString().split("T")[0];
-              return timeSelections[dateStr]?.length > 0 ? "selected-day" : "";
+              const dateStr = date.toLocaleDateString("en-CA"); // ใช้ format เดียวกับ currentDate
+              return selectedDates.includes(dateStr) || timeSelections[dateStr]?.length > 0
+                ? "selected-day"
+                : "";
             }}
           />
         </div>

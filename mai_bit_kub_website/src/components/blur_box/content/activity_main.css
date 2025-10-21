@@ -1,29 +1,101 @@
-.display{
-    justify-items: center;
-    font-size: 32px;
+.display {
+    display: flex;
+    flex-direction: column; /* ให้เป็นแนวตั้ง */
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+    font-size: 24px;
     font-weight: bold;
+    padding: 20px;
+    box-sizing: border-box; /* รวม padding ใน width */
 }
-.activity_icon{
+
+/* Activity หลัก */
+.activity_icon {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    gap: 20px;
+    overflow-x: auto;   /* scroll แนวนอน */
+    padding: 10px;
+    justify-content: flex-start; /* ให้เริ่มจากซ้าย */
+    flex-wrap: nowrap; /* ให้เป็นบรรทัดเดียว */
 }
-.activity_icon{
-    width: 100%;              /* กำหนดความกว้าง */
-    overflow-x: auto;          /* เปิด scroll แนวนอน */
-    white-space: nowrap;
-    
-    
+
+.activity_card {
+    flex: 0 0 auto; /* ป้องกัน shrink */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    column-gap: 10px;
 }
 
 
+.activity_card img {
+    width: 120px;
+    height: 120px;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.activity_card img:hover {
+    transform: scale(1.2);
+}
+
+.activity_name {
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+/* Activity ย่อย */
+.sub_activity_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* จัดกลางแนวตั้ง */
+    width: 100%;
+}
+
+.sub_activity_icon {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px;
+    justify-content: flex-start;
+}
+
+.sub_card {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sub_card img {
+    width: 100px;
+    height: 100px;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.sub_card img:hover {
+    transform: scale(1.2);
+}
+
+.sub_name {
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+
+.back_btn {
+    margin-left: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    border: none;
+    background: none;      /* เอา background ออก */
+    transition: transform 0.2s;
+}
+
+.back_btn:hover {
+    transform: scale(1.2); /* hover ขยายเล็กน้อย */
+}

@@ -157,6 +157,7 @@
 ========================== */
 .time-selector {
   width: 150px;
+  height: 100%;
   border-radius: 16px;
   backdrop-filter: blur(12px);
   background-color: rgba(234, 91, 111, 0.16);
