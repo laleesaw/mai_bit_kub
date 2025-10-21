@@ -53,6 +53,8 @@ export default function SignUp() {
                 body: JSON.stringify({ email, name: username, password })
             });
 
+            console.log('Response status:', res.status);
+
             const responseData = await res.json();
 
             if (res.ok) {
@@ -63,41 +65,17 @@ export default function SignUp() {
                 setTimeout(() => {
                     navigate('/signin');
                 }, 4500);
-            } else {
-                // เช็คข้อความ error ที่ได้จาก API
-                if (responseData.error === "Email already exists") {
-                    toast.error("This email is already registered. Please use a different email or sign in.", {
-                        position: "top-center",
-                        autoClose: 5000
-                    });
-                } else {
-                    const errorMessage = responseData.error || "Something went wrong. Please try again.";
-                    toast.error(errorMessage, {
-                        position: "top-center",
-                        autoClose: 5000
-                    });
-                }
+                return;  // ออกจากฟังก์ชันเมื่อสำเร็จ
             }
             
-            console.log('Response status:', res.status);
-            const data = await res.json();
-            console.log('Response data:', data);
-
-            if (res.ok) {
-                toast.success("Sign up successful! Redirecting to sign in...", {
-                    position: "top-center",
-                    autoClose: 4000
-                });
-                setTimeout(() => {
-                    navigate('/signin');
-                }, 4500);
-            } else if (data.error === "Email already exists") {
+            // เช็คข้อความ error ที่ได้จาก API
+            if (responseData.error === "Email already exists") {
                 toast.error("This email is already registered. Please use a different email or sign in.", {
                     position: "top-center",
                     autoClose: 5000
                 });
             } else {
-                const errorMessage = data.error || "Something went wrong. Please try again.";
+                const errorMessage = responseData.error || "Something went wrong. Please try again.";
                 toast.error(errorMessage, {
                     position: "top-center",
                     autoClose: 5000
