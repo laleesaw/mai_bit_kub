@@ -1,16 +1,59 @@
-.box{
+.main-layout {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
     margin-top: 40px;
 }
-.top{
+
+.sidebar {
+    flex: 0 0 250px;
+    margin-top: 20px;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.top {
     justify-content: center;
     display: flex;
     margin-bottom: 10px;
-    column-gap: 10px; /* ซ้าย-ขวา */
-    row-gap: 10px;   /* บน-ล่าง */
+    column-gap: 10px;
+    row-gap: 10px;
 }
-.bottom{
+
+.bottom {
     justify-content: center;
     display: flex;
-    column-gap: 10px; /* ซ้าย-ขวา */
-    row-gap: 10px;   /* บน-ล่าง */
+    column-gap: 10px;
+    row-gap: 10px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    background-color: #ff5555;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #ff3333;
 }

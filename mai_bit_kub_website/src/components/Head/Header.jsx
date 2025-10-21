@@ -65,6 +65,8 @@ function Header(){
             if (!res.ok) throw new Error('Failed to create group');
 
             toast.success('Group created successfully!');
+            // Dispatch event to notify GroupList
+            window.dispatchEvent(new Event('groupCreated'));
             setNewGroupName('');
             setMaxMembers(10);
             setShowCreateGroup(false);

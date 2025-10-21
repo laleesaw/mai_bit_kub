@@ -1,0 +1,73 @@
+.group-list-container {
+    background-color: rgba(234, 91, 111, 0.16);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 20px;
+    min-width: 250px;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #ea5b6f80 #ffffff20;
+}
+
+.group-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.group-list-container::-webkit-scrollbar-track {
+    background: #ffffff10;
+    border-radius: 4px;
+}
+
+.group-list-container::-webkit-scrollbar-thumb {
+    background: #ea5b6f80;
+    border-radius: 4px;
+}
+
+.group-list-container h2 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.groups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.group-item {
+    background-color: rgba(234, 91, 111, 0.1);
+    padding: 15px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.group-item:hover {
+    background-color: rgba(234, 91, 111, 0.3);
+    transform: translateX(5px);
+}
+
+.group-name {
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.member-count {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.no-groups {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}

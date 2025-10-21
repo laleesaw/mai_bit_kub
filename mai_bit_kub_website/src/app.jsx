@@ -11,7 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ToastContainer 
         position="top-center" 
         autoClose={3000}
