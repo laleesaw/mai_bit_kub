@@ -27,15 +27,23 @@ function EditProfile() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3000/api/user/${userId}`, {
+                console.log('Fetching user data for ID:', userId);
+                const response = await fetch(`/api/user/${userId}`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
                     }
                 });
 
-                if (!response.ok) throw new Error('Failed to fetch user data');
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to fetch user data: ${response.status}`);
+                }
 
                 const userData = await response.json();
+                console.log('Received user data:', userData);
                 const initialValues = {
                     name: userData.name || '',
                     email: userData.email || ''
@@ -102,7 +110,7 @@ function EditProfile() {
 
         try {
             const userId = localStorage.getItem('userId');
-            const response = await fetch(`http://localhost:3000/api/user/${userId}`, {
+            const response = await fetch(`/api/user/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
