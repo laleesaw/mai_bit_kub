@@ -1,32 +1,111 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./SignUp.css";
 import logo from "../assets/logo_mai_bit_kub.png";
 
 export default function SignUp() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [message, setMessage] = useState(""); // เก็บผลลัพธ์จาก backend
+
+    React.useEffect(() => {
+        toast.info("Welcome to Sign Up page!", {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+    }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // ป้องกัน form reload หน้า
+        e.preventDefault();
+
+        // ตรวจสอบข้อมูลก่อนส่ง
+        if (!email || !username || !password) {
+            toast.error("Please fill in all fields", {
+                position: "top-center",
+                autoClose: 5000
+            });
+            return;
+        }
+
+        // ตรวจสอบรูปแบบอีเมล
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            toast.error("Please enter a valid email address", {
+                position: "top-center",
+                autoClose: 5000
+            });
+            return;
+        }
+
         try {
-            const res = await fetch("http://localhost:3000/api/user", { // ลิงก์ไป backend API
+            const res = await fetch("http://localhost:3000/api/user", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
                 body: JSON.stringify({ email, name: username, password })
             });
-            const data = await res.json();
+
+            const responseData = await res.json();
+
             if (res.ok) {
-                setMessage("Sign up successful!");
-                console.log(data); // ข้อมูล user ที่สร้างจาก backend
+                toast.success("Sign up successful! Redirecting to sign in...", {
+                    position: "top-center",
+                    autoClose: 4000
+                });
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 4500);
             } else {
-                setMessage(data.message || "Sign up failed");
+                // เช็คข้อความ error ที่ได้จาก API
+                if (responseData.error === "Email already exists") {
+                    toast.error("This email is already registered. Please use a different email or sign in.", {
+                        position: "top-center",
+                        autoClose: 5000
+                    });
+                } else {
+                    const errorMessage = responseData.error || "Something went wrong. Please try again.";
+                    toast.error(errorMessage, {
+                        position: "top-center",
+                        autoClose: 5000
+                    });
+                }
+            }
+            
+            console.log('Response status:', res.status);
+            const data = await res.json();
+            console.log('Response data:', data);
+
+            if (res.ok) {
+                toast.success("Sign up successful! Redirecting to sign in...", {
+                    position: "top-center",
+                    autoClose: 4000
+                });
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 4500);
+            } else if (data.error === "Email already exists") {
+                toast.error("This email is already registered. Please use a different email or sign in.", {
+                    position: "top-center",
+                    autoClose: 5000
+                });
+            } else {
+                const errorMessage = data.error || "Something went wrong. Please try again.";
+                toast.error(errorMessage, {
+                    position: "top-center",
+                    autoClose: 5000
+                });
             }
         } catch (err) {
-            console.error(err);
-            setMessage("Sign up fail");
+            console.error('Error during signup:', err);
+            toast.error("Something went wrong. Please try again later.");
         }
     };
 
@@ -63,7 +142,6 @@ export default function SignUp() {
                         />
                         <button type="submit" className="signup-btn">Sign Up</button>
                     </form>
-                    {message && <p>{message}</p>}
                     <div className="signup-bottom-text">
                         ALREADY HAVE AN ACCOUNT? <Link to="/signin" className="signup-link">SIGN IN</Link>
                     </div>

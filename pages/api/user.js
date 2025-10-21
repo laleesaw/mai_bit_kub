@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import cors from './middleware/cors';
 const prisma = new PrismaClient();
 
 function serializeUser(user) {
@@ -33,13 +34,17 @@ function serializeUser(user) {
 }
 
 export default async function handler(req, res) {
-  // --- CORS headers ---
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET,POST,PUT,DELETE,OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+
+  // Handle preflight request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   if (req.method === "OPTIONS") {
     return res.status(200).end();
@@ -47,6 +52,40 @@ export default async function handler(req, res) {
 
   try {
     switch (req.method) {
+      case "POST": {
+        const { email, name, password } = req.body;
+        
+        // Validate required fields
+        if (!email || !name || !password) {
+          return res.status(400).json({ error: "All fields are required" });
+        }
+
+        try {
+          // Check if email already exists
+          const existingUser = await prisma.user.findUnique({
+            where: { email }
+          });
+
+          if (existingUser) {
+            return res.status(400).json({ error: "Email already exists" });
+          }
+
+          // Create new user
+          const newUser = await prisma.user.create({
+            data: {
+              email,
+              name,
+              password  // In production, you should hash the password
+            }
+          });
+
+          return res.status(201).json(serializeUser(newUser));
+        } catch (error) {
+          console.error('Error creating user:', error);
+          return res.status(500).json({ error: "Failed to create user" });
+        }
+      }
+
       case "GET": {
         const users = await prisma.user.findMany({
           include: {

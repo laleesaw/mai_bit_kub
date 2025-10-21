@@ -90,7 +90,7 @@ function SignIn() {
                     <form className="sign-form" onSubmit={handleSubmit}>
                         <input
                             type="text"
-                            placeholder="USERNAME"
+                            placeholder="EMAIL"
                             className="sign-input"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
