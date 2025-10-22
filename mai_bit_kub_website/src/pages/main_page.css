@@ -13,7 +13,7 @@
 .sidebar {
     position: relative;
     flex: 0 0 250px;
-    transition: all 0.3s ease;
+    transition: flex 1s cubic-bezier(0.4, 0, 0.2, 1), min-width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar.hide {
@@ -26,6 +26,7 @@
     pointer-events: none;
     width: 0;
     overflow: hidden;
+    transition: opacity 0.5s ease, width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .toggle-sidebar-btn {

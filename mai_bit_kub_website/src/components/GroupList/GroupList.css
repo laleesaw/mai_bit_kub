@@ -9,7 +9,7 @@
     scrollbar-width: thin;
     scrollbar-color: #ea5b6f80 #ffffff20;
     cursor: pointer;
-    transition: background-color 0.5s, transform 0.5s, opacity 0.3s ease;
+    transition: background-color 1s, transform 1s, opacity 1s cubic-bezier(0.4, 0, 0.2, 1), width 1s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
 }
 
@@ -197,20 +197,24 @@
 .modal-buttons button:first-child {
     background: linear-gradient(135deg, #6B7FEA, #7f8fff);
     color: white;
+    box-shadow: 0 4px 15px rgba(107, 127, 234, 0.4);
 }
 
 .modal-buttons button:first-child:hover { 
     background: linear-gradient(135deg, #7f8fff, #8f9fff);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 127, 234, 0.6);
 }
 
 .modal-buttons button:last-child {
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(107, 127, 234, 0.3);
 }
 
 .modal-buttons button:last-child:hover { 
     background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 127, 234, 0.5);
 }
