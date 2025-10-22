@@ -1,33 +1,134 @@
-.budget{
-    /* background-color: aqua; */
+.budget {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.budget img {
+  width: 150px;
+}
+
+/* container ของช่องกรอก */
+.amount-container {
+  display: flex;
+  margin-top: 15px;
+  background-color: #FFFBDE;
+  border-radius: 40px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  padding: 5px;
+  gap: 5px;
+}
+
+/* wrapper สำหรับ input + ฿ */
+.budget-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ช่องกรอก */
+.budget-min,
+.budget-max {
+  width: 180px;
+  height: 60px;
+  border: none;
+  text-align: center; /* ให้เลขชิดขวา */
+  padding-right: 30px; /* เว้นที่วาง ฿ */
+  font-size: 24px;
+  font-weight: bold;
+  outline: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+/* ฿ อยู่หลังตัวเลข */
+.currency {
+  position: absolute;
+  right: 10px;
+  font-size: 24px;
+  color: #EA5B6F;       /* สี default */
+  pointer-events: none;
+  opacity: 0;           /* ซ่อน default */
+  transition: all 0.2s ease; /* ให้สีและ opacity เปลี่ยน smoothly */
+}
+
+/* แสดง ฿ เมื่อ focus หรือมีค่า */
+.budget-wrapper input:focus + .currency,
+.budget-wrapper input:not(:placeholder-shown) + .currency {
+  opacity: 1;
+}
+
+/* เปลี่ยนสีเมื่อ mouse hover ช่อง input */
+.budget-wrapper input:hover + .currency {
+  color: #FFFBDE; /* สีเมื่อ hover */
+}
 
 
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+/* hover background effect */
+.budget-min:hover,
+.budget-max:hover {
+  background-color: #EA5B6F;
+}
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+/* border-radius */
+.budget-min {
+  border-radius: 30px 0 0 30px;
 }
-.profile img{
-    width: 175px;
+
+.budget-max {
+  border-radius: 0 30px 30px 0;
 }
-.budget img{
-    width: 150px;
+
+/* placeholder สีเทา */
+.budget-min::placeholder,
+.budget-max::placeholder {
+  display: flex;
+  color: #aaa;
+  /* background-color: aqua; */
+  width: 100%;
+
+  
 }
-.amount{
-    display: flex;
-    width: 272px;
-    height: 50px;
-    background-color: rgba(255, 251, 222, 0.35);
-    justify-content: center;
-    align-items: center;
-    justify-self: center;
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 32px;
-    border-radius: 25px;
+
+/* placeholder หายเมื่อ focus */
+.budget-min:focus::placeholder,
+.budget-max:focus::placeholder {
+  color: transparent;
+}
+
+/* ปิด spin button ของ number input */
+.budget-min::-webkit-inner-spin-button,
+.budget-min::-webkit-outer-spin-button,
+.budget-max::-webkit-inner-spin-button,
+.budget-max::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.budget-min[type=number],
+.budget-max[type=number] {
+  -moz-appearance: textfield;
+}
+
+.save-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #EA5B6F;
+  color: white;
+  font-size: 18px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.save-btn:hover {
+  transform: scale(1.05);
 }
