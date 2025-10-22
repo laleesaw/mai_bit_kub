@@ -1,5 +1,5 @@
 import "./main_page.css"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Blur_box from "../components/blur_box/blur_box.jsx"
 import Budget_content from "../components/blur_box/content/budget_main.jsx"
@@ -10,6 +10,7 @@ import GroupList from "../components/GroupList/GroupList.jsx"
 
 function main_page(){
     const navigate = useNavigate();
+    const [showGroupList, setShowGroupList] = useState(true);
 
     useEffect(() => {
         const username = localStorage.getItem('username');
@@ -20,7 +21,13 @@ function main_page(){
 
     return(
         <div className="main-layout">
-            <div className="sidebar">
+            <div className={`sidebar ${showGroupList ? 'show' : 'hide'}`}>
+                <button 
+                    className="toggle-sidebar-btn"
+                    onClick={() => setShowGroupList(!showGroupList)}
+                >
+                    {showGroupList ? '>' : '<'}
+                </button>
                 <GroupList />
             </div>
             <div className="main-content">

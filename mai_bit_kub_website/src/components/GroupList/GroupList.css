@@ -4,10 +4,18 @@
     border-radius: 24px;
     padding: 20px;
     min-width: 250px;
-    height: calc(100vh - 140px);
+    height: calc(100vh - 80px - 21px - 80px - 10px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #ea5b6f80 #ffffff20;
+    cursor: pointer;
+    transition: background-color 0.5s, transform 0.5s, opacity 0.3s ease;
+    transform-origin: center;
+}
+
+.group-list-container:hover {
+    background-color: rgba(234, 91, 111, 0.50);
+    transform: scale(1.01);
 }
 
 .group-list-container::-webkit-scrollbar {
