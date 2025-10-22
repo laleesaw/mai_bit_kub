@@ -41,9 +41,14 @@ function GroupList() {
 
     const handleGenerateCode = async (groupId) => {
         try {
+            console.log('Generating code for group:', groupId, 'user:', userId);
             const res = await fetch('http://localhost:3000/api/group/joincode', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'include',
                 body: JSON.stringify({
                     group_id: groupId,
                     user_id: parseInt(userId)

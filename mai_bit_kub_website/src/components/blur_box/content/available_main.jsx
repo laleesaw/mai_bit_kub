@@ -22,6 +22,30 @@ function Available() {
   
   // เก็บรายการกลุ่ม
   const [groups, setGroups] = useState([]);
+  
+  // เก็บเวลาที่เคยเลือกไว้แล้ว
+  const [existingAvailabilities, setExistingAvailabilities] = useState([]);
+
+  // ฟังก์ชันตรวจสอบว่าช่วงเวลานี้ถูกเลือกไว้แล้วหรือไม่
+  const isTimeSlotExisting = (date, timeSlot) => {
+    if (!date || !existingAvailabilities.length) return false;
+
+    const [startTime, endTime] = timeSlot.split(' - ');
+    const [startHour] = startTime.split(':').map(Number);
+    const [endHour] = endTime.split(':').map(Number);
+
+    // แปลงวันที่และเวลาเป็น Date objects
+    const [year, month, day] = date.split('-').map(Number);
+    const slotStart = new Date(Date.UTC(year, month - 1, day, startHour, 0, 0));
+    const slotEnd = new Date(Date.UTC(year, month - 1, day, endHour, 0, 0));
+
+    // ตรวจสอบว่ามีช่วงเวลาที่ซ้อนทับกันหรือไม่
+    return existingAvailabilities.some(avail => {
+      const existingStart = new Date(avail.start_datetime);
+      const existingEnd = new Date(avail.end_datetime);
+      return (slotStart < existingEnd && slotEnd > existingStart);
+    });
+  };
 
   // สร้างช่วงเวลา 24 ชั่วโมง
   const timeSlots = [
@@ -72,6 +96,29 @@ function Available() {
     const newDate = new Date(currentMonth);
     newDate.setMonth(currentMonth.getMonth() + 1);
     setCurrentMonth(newDate);
+  };
+
+  // ฟังก์ชันดึงข้อมูลเวลาที่เคยเลือกไว้
+  const fetchExistingAvailabilities = async (groupId) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId || !groupId) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/availability?userId=${userId}&groupId=${groupId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      setExistingAvailabilities(data);
+    } catch (error) {
+      console.error('Error fetching existing availabilities:', error);
+      toast.error('Failed to load your existing availabilities');
+    }
   };
 
   // ดึงข้อมูลกลุ่มเมื่อ component โหลด
@@ -308,7 +355,10 @@ function Available() {
                 <div
                   key={group.id}
                   className={`group-select-item ${selectedGroup?.id === group.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedGroup(group)}
+                  onClick={() => {
+                    setSelectedGroup(group);
+                    fetchExistingAvailabilities(group.id);
+                  }}
                 >
                   {group.group_name}
                 </div>
@@ -328,7 +378,7 @@ function Available() {
                   key={time}
                   className={`time-slot ${
                     timeSelections[currentDate]?.includes(time) ? "selected" : ""
-                  }`}
+                  } ${isTimeSlotExisting(currentDate, time) ? "existing" : ""}`}
                   onClick={() => handleTimeClick(currentDate, time)}
                 >
                   {time}

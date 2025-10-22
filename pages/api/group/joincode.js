@@ -13,9 +13,10 @@ function generateJoinCode() {
 
 export default async function handler(req, res) {
   // --- CORS headers ---
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
 
   // --- Preflight request ---
   if (req.method === "OPTIONS") {
@@ -48,29 +49,46 @@ export default async function handler(req, res) {
         }
 
         // Generate unique join code
-        let joinCode;
-        let isUnique = false;
-        
-        while (!isUnique) {
-          joinCode = generateJoinCode();
-          const existing = await prisma.group.findUnique({
-            where: { join_code: joinCode }
-          });
-          if (!existing) {
-            isUnique = true;
+        const joinCode = generateJoinCode();
+        console.log('Generated join code:', joinCode);
+
+        // Check if code exists (excluding current group)
+        const existing = await prisma.group.findFirst({
+          where: {
+            AND: [
+              { join_code: joinCode },
+              { group_id: { not: parseInt(group_id) } }
+            ]
           }
+        });
+
+        if (existing) {
+          return res.status(409).json({ message: "Failed to generate unique join code, please try again" });
         }
 
         // Update group with new join code
-        const updatedGroup = await prisma.group.update({
-          where: { group_id: parseInt(group_id) },
-          data: { join_code: joinCode }
-        });
+        try {
+          const updatedGroup = await prisma.group.update({
+            where: { 
+              group_id: parseInt(group_id) 
+            },
+            data: { 
+              join_code: joinCode 
+            }
+          });
 
-        return res.status(200).json({ 
-          message: "Join code generated successfully",
-          join_code: updatedGroup.join_code 
-        });
+          console.log('Group updated successfully:', updatedGroup);
+          return res.status(200).json({ 
+            message: "Join code generated successfully",
+            join_code: updatedGroup.join_code 
+          });
+        } catch (error) {
+          console.error('Error updating group:', error);
+          return res.status(500).json({ 
+            message: "Failed to update group with new join code",
+            error: error.message 
+          });
+        }
       }
 
       // Join group using join code
@@ -82,7 +100,7 @@ export default async function handler(req, res) {
         }
 
         // Find group by join code
-        const group = await prisma.group.findUnique({
+        const group = await prisma.group.findFirst({
           where: { join_code: join_code.toUpperCase() },
           include: { members: true }
         });
