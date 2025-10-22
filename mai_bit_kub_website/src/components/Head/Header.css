@@ -111,34 +111,189 @@ header {
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex; justify-content: center; align-items: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .modal-content {
-    background: #1a1a1a;
-    padding: 30px;
-    border-radius: 12px;
+    background: rgba(234, 91, 111, 0.12);
+    backdrop-filter: blur(20px);
+    padding: 35px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     color: white;
-    border: 1px solid #EA5B6F;
+    border: 2px solid rgba(234, 91, 111, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease;
 }
+
 .modal-content h2 {
-    margin: 0 0 20px 0;
+    margin: 0 0 25px 0;
     text-align: center;
     color: #EA5B6F;
+    font-size: 1.8rem;
+    font-weight: 600;
 }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; margin-bottom: 5px; color: #EA5B6F; }
+
+.form-group { 
+    margin-bottom: 20px; 
+}
+
+.form-group label { 
+    display: block; 
+    margin-bottom: 8px; 
+    color: #ff8fa3;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
 .form-group input {
-    width: 100%; padding: 8px;
-    border: 1px solid #333; border-radius: 4px;
-    background: #2a2a2a; color: white;
+    width: 100%; 
+    padding: 12px 15px;
+    border: 2px solid rgba(234, 91, 111, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
-.modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-.modal-buttons button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; }
-.modal-buttons button[type="submit"] { background: #646cff; color: white; }
-.modal-buttons button[type="submit"]:hover { background: #535bf2; }
-.modal-buttons button[type="button"] { background: #333; color: white; }
-.modal-buttons button[type="button"]:hover { background: #444; }
+
+.form-group input:focus {
+    outline: none;
+    border-color: #EA5B6F;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.modal-buttons { 
+    display: flex; 
+    gap: 12px; 
+    justify-content: center; 
+    margin-top: 25px; 
+}
+
+.modal-buttons button { 
+    padding: 12px 30px; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.modal-buttons button[type="submit"] { 
+    background: linear-gradient(135deg, #EA5B6F, #ff6b7f);
+    color: white;
+    box-shadow: 0 4px 15px rgba(234, 91, 111, 0.4);
+}
+
+.modal-buttons button[type="submit"]:hover { 
+    background: linear-gradient(135deg, #ff6b7f, #ff7a8f);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 91, 111, 0.6);
+}
+
+.modal-buttons button[type="button"] { 
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-buttons button[type="button"]:hover { 
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Join Group Modal - Blue Theme */
+.modal-content.join-modal {
+    background: rgba(107, 127, 234, 0.12);
+    border: 2px solid rgba(107, 127, 234, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content.join-modal h2 {
+    color: #6B7FEA;
+}
+
+.modal-content.join-modal .form-group label {
+    color: #8fa3ff;
+}
+
+.modal-content.join-modal .form-group input {
+    border: 2px solid rgba(107, 127, 234, 0.3);
+}
+
+.modal-content.join-modal .form-group input:focus {
+    border-color: #6B7FEA;
+}
+
+.modal-content.join-modal .modal-buttons button[type="submit"] {
+    background: linear-gradient(135deg, #6B7FEA, #7f8fff);
+    box-shadow: 0 4px 15px rgba(107, 127, 234, 0.4);
+}
+
+.modal-content.join-modal .modal-buttons button[type="submit"]:hover {
+    background: linear-gradient(135deg, #7f8fff, #8f9fff);
+    box-shadow: 0 6px 20px rgba(107, 127, 234, 0.6);
+}
+
+/* Create Group Modal - Pink Theme */
+.modal-content.create-modal {
+    background: rgba(234, 91, 111, 0.12);
+    border: 2px solid rgba(234, 91, 111, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content.create-modal h2 {
+    color: #EA5B6F;
+}
+
+.modal-content.create-modal .form-group label {
+    color: #ff8fa3;
+}
+
+.modal-content.create-modal .form-group input {
+    border: 2px solid rgba(234, 91, 111, 0.3);
+}
+
+.modal-content.create-modal .form-group input:focus {
+    border-color: #EA5B6F;
+}
+
+.modal-content.create-modal .modal-buttons button[type="submit"] {
+    background: linear-gradient(135deg, #EA5B6F, #ff6b7f);
+    box-shadow: 0 4px 15px rgba(234, 91, 111, 0.4);
+}
+
+.modal-content.create-modal .modal-buttons button[type="submit"]:hover {
+    background: linear-gradient(135deg, #ff6b7f, #ff7a8f);
+    box-shadow: 0 6px 20px rgba(234, 91, 111, 0.6);
+}
