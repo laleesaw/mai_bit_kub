@@ -53,7 +53,7 @@
 
 .toggle-sidebar-btn:hover {
     background: rgba(234, 91, 111, 0.6);
-    width: 38px;
+    transform: translateY(-50%) scale(1.1);
     box-shadow: 0 6px 20px rgba(234, 91, 111, 0.5);
 }
 
