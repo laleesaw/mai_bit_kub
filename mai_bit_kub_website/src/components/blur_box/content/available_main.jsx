@@ -358,6 +358,10 @@ function Available() {
                   onClick={() => {
                     setSelectedGroup(group);
                     fetchExistingAvailabilities(group.id);
+                    // ส่ง event เพื่ออัพเดท Friend component
+                    window.dispatchEvent(new CustomEvent('groupSelected', { 
+                      detail: { groupId: group.id, groupName: group.group_name } 
+                    }));
                   }}
                 >
                   {group.group_name}

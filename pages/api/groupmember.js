@@ -26,7 +26,15 @@ export default async function handler(req, res) {
   try {
     switch(req.method) {
       case "GET": {
-        const members = await prisma.groupMember.findMany({ include: { user: true, group: true } });
+        const { groupId } = req.query;
+        
+        // ถ้ามี groupId ให้กรองตาม group_id
+        const whereClause = groupId ? { group_id: parseInt(groupId) } : {};
+        
+        const members = await prisma.groupMember.findMany({ 
+          where: whereClause,
+          include: { user: true, group: true } 
+        });
         return res.status(200).json(members.map(serializeGroupMember));
       }
 
