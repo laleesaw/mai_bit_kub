@@ -79,20 +79,30 @@
 }
 
 .generate-code-btn {
-    padding: 8px 12px;
-    background-color: #6B7FEA;
+    padding: 8px 14px;
+    background: rgba(107, 127, 234, 0.4);
+    backdrop-filter: blur(10px);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    font-weight: 600;
     transition: all 0.3s ease;
     align-self: stretch;
+    box-shadow: 0 3px 12px rgba(107, 127, 234, 0.2);
+    letter-spacing: 0.3px;
 }
 
 .generate-code-btn:hover {
-    background-color: #7f8fff;
+    background: rgba(107, 127, 234, 0.55);
     transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(107, 127, 234, 0.4);
+}
+
+.generate-code-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(107, 127, 234, 0.3);
 }
 
 /* Modal Styles */
@@ -114,7 +124,7 @@
     width: 100%;
     max-width: 420px;
     color: white;
-    border: 2px solid rgba(107, 127, 234, 0.5);
+    border: none;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease;
 }
@@ -149,7 +159,7 @@
     letter-spacing: 0.3em;
     color: #6B7FEA;
     margin-bottom: 20px;
-    border: 2px dashed rgba(107, 127, 234, 0.5);
+    border: none;
 }
 
 .code-instruction {
@@ -172,13 +182,27 @@
     border-radius: 10px; 
     cursor: pointer; 
     transition: all 0.3s ease;
-    background: linear-gradient(135deg, #6B7FEA, #7f8fff);
-    color: white;
     font-size: 1rem;
     font-weight: 500;
 }
 
-.modal-buttons button:hover { 
+.modal-buttons button:first-child {
+    background: linear-gradient(135deg, #6B7FEA, #7f8fff);
+    color: white;
+}
+
+.modal-buttons button:first-child:hover { 
     background: linear-gradient(135deg, #7f8fff, #8f9fff);
+    transform: translateY(-2px);
+}
+
+.modal-buttons button:last-child {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-buttons button:last-child:hover { 
+    background: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
 }

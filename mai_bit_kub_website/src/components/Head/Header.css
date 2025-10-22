@@ -32,28 +32,56 @@ header {
 .notice_button, .home_button, .profile_button { height: 80px; }
 
 .create-group-btn {
-    padding: 4px 10px;
-    background-color: #EA5B6F;
+    padding: 6px 12px;
+    background: rgba(234, 91, 111, 0.4);
+    backdrop-filter: blur(10px);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(234, 91, 111, 0.2);
+    letter-spacing: 0.3px;
 }
-.create-group-btn:hover { background-color: #ff6b7f; transform: translateY(-2px); }
+
+.create-group-btn:hover { 
+    background: rgba(234, 91, 111, 0.55);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(234, 91, 111, 0.4);
+}
+
+.create-group-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(234, 91, 111, 0.3);
+}
 
 .join-group-btn {
-    padding: 4px 10px;
-    background-color: #6B7FEA;
+    padding: 6px 12px;
+    background: rgba(107, 127, 234, 0.4);
+    backdrop-filter: blur(10px);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(107, 127, 234, 0.2);
+    letter-spacing: 0.3px;
 }
-.join-group-btn:hover { background-color: #7f8fff; transform: translateY(-2px); }
+
+.join-group-btn:hover { 
+    background: rgba(107, 127, 234, 0.55);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(107, 127, 234, 0.4);
+}
+
+.join-group-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(107, 127, 234, 0.3);
+}
 
 .profile_button {
     position: relative; /* ต้องมี relative เพื่อให้ dropdown absolute */
@@ -144,7 +172,7 @@ header {
     width: 100%;
     max-width: 420px;
     color: white;
-    border: 2px solid rgba(234, 91, 111, 0.5);
+    border: none;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.4s ease;
 }
@@ -235,7 +263,7 @@ header {
 /* Join Group Modal - Blue Theme */
 .modal-content.join-modal {
     background: rgba(107, 127, 234, 0.12);
-    border: 2px solid rgba(107, 127, 234, 0.5);
+    border: none;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
@@ -268,7 +296,7 @@ header {
 /* Create Group Modal - Pink Theme */
 .modal-content.create-modal {
     background: rgba(234, 91, 111, 0.12);
-    border: 2px solid rgba(234, 91, 111, 0.5);
+    border: none;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
