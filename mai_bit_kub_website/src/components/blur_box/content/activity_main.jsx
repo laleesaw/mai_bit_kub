@@ -11,6 +11,11 @@ import Create_icon from "../../../assets/create.png";
 
 import Pingpong_icon from "../../../assets/pingpong.png";
 import Boxing_icon from "../../../assets/boxing.png";
+import Swimming_icon from "../../../assets/water.png";
+
+import Photography_icon from "../../../assets/photography.png";
+
+
 import Add_activity_icon from "../../../assets/add_activity.png";
 
 const mainActivities = [
@@ -20,6 +25,7 @@ const mainActivities = [
     subActivities: [
       { name: "PINGPONG", icon: Pingpong_icon },
       { name: "BOXING", icon: Boxing_icon },
+      { name: "SWIMMING", icon: Swimming_icon },
     ],
   },
   {
@@ -40,7 +46,9 @@ const mainActivities = [
   {
     name: "CREATE",
     icon: Create_icon,
-    subActivities: [],
+    subActivities: [
+      { name: "PHOTOGRAPHY", icon: Photography_icon },
+    ],
   },
 ];
 
