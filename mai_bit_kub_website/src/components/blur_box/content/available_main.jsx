@@ -189,19 +189,48 @@ function Available() {
           endDate: endDate.toISOString()
         });
 
+        // ใช้เวลาจาก time slot โดยตรงเพราะเป็นเวลาท้องถิ่นอยู่แล้ว
         availabilities.push({
           user_id: parseInt(userId),
           group_id: selectedGroup.id,
           start_datetime: startDate.toISOString(),
           end_datetime: endDate.toISOString(),
-          note: `Available on ${date} at ${localStartTime} - ${localEndTime}`
+          note: `Available on ${date} at ${time}`
         });
       });
     });
 
+    // เก็บรายการเวลาที่ซ้ำ
+    const overlappingTimes = new Set();
+    
+    // ตรวจสอบการซ้ำทั้งหมดก่อน
+    for (const availability of availabilities) {
+      const isOverlap = await checkOverlap(
+        availability.user_id, 
+        availability.group_id,
+        availability.start_datetime,
+        availability.end_datetime
+      );
+
+      if (isOverlap) {
+        const localTime = new Date(availability.start_datetime).toLocaleTimeString('th-TH', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        });
+        overlappingTimes.add(localTime);
+      }
+    }
+
+    // แสดง toast error สำหรับเวลาที่ซ้ำทั้งหมดในครั้งเดียว
+    if (overlappingTimes.size > 0) {
+      const timeList = Array.from(overlappingTimes).join(", ");
+      toast.error(`Time slots already booked: ${timeList}`);
+    }
+
+    // บันทึกเฉพาะเวลาที่ไม่ซ้ำ
     for (const availability of availabilities) {
       try {
-        // ตรวจสอบเวลาที่ซ้ำกัน
         const isOverlap = await checkOverlap(
           availability.user_id, 
           availability.group_id,
@@ -209,16 +238,7 @@ function Available() {
           availability.end_datetime
         );
 
-        if (isOverlap) {
-          // ถ้าซ้ำ ให้แสดง error และข้ามไป
-          const localTime = new Date(availability.start_datetime).toLocaleTimeString('th-TH', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-          });
-          toast.error(`Time slot ${localTime} is already booked`);
-          continue;
-        }
+        if (isOverlap) continue; // ข้ามการบันทึกถ้าซ้ำ
 
         const response = await fetch('http://localhost:3000/api/availability', {
           method: 'POST',
