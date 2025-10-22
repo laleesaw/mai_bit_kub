@@ -8,6 +8,7 @@ function serializeGroup(group) {
     group_name: group.group_name,
     max_members: group.max_members,
     created_by: group.created_by,
+    join_code: group.join_code,
     creator: group.creator
       ? { user_id: group.creator.user_id, name: group.creator.name, email: group.creator.email }
       : null,
@@ -18,6 +19,16 @@ function serializeGroup(group) {
       end_datetime: a.end_datetime
     })) : [],
   };
+}
+
+// helper: generate random join code
+function generateJoinCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
 }
 
 export default async function handler(req, res) {

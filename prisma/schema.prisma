@@ -28,6 +28,7 @@ model Group {
   group_name  String
   max_members Int
   created_by  Int
+  join_code   String?   @unique
   created_at  DateTime  @default(now())
 
   creator     User      @relation("GroupCreator", fields: [created_by], references: [user_id])

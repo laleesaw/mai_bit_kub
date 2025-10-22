@@ -43,6 +43,18 @@ header {
 }
 .create-group-btn:hover { background-color: #ff6b7f; transform: translateY(-2px); }
 
+.join-group-btn {
+    padding: 4px 10px;
+    background-color: #6B7FEA;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+.join-group-btn:hover { background-color: #7f8fff; transform: translateY(-2px); }
+
 .profile_button {
     position: relative; /* ต้องมี relative เพื่อให้ dropdown absolute */
     height: 80px;
