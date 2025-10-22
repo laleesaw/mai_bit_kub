@@ -177,19 +177,29 @@
 }
 
 /* Custom Toast Styles */
+.Toastify__toast-container {
+    z-index: 99999 !important;
+}
+
 .Toastify__toast {
-    border-radius: 8px;
+    border-radius: 12px;
     font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(20px);
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .Toastify__toast--success {
-    background: #4CAF50;
+    background: rgba(76, 175, 80, 0.85);
+    backdrop-filter: blur(20px);
 }
 
 .Toastify__toast--error {
-    background: #f44336;
+    background: rgba(244, 67, 54, 0.85);
+    backdrop-filter: blur(20px);
 }
 
 .Toastify__toast--loading {
-    background: #2196F3;
+    background: rgba(33, 150, 243, 0.85);
+    backdrop-filter: blur(20px);
 }

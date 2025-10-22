@@ -192,7 +192,7 @@ function Header(){
             {/* Modal สร้างกลุ่ม */}
             {showCreateGroup && (
                 <div className="modal-overlay">
-                    <div className="modal-content">
+                    <div className="modal-content create-modal">
                         <h2>Create New Group</h2>
                         <form onSubmit={handleCreateGroup}>
                             <div className="form-group">
@@ -227,7 +227,7 @@ function Header(){
             {/* Modal เข้าร่วมกลุ่ม */}
             {showJoinGroup && (
                 <div className="modal-overlay">
-                    <div className="modal-content">
+                    <div className="modal-content join-modal">
                         <h2>Join Group</h2>
                         <form onSubmit={handleJoinGroup}>
                             <div className="form-group">
