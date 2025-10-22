@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./available_main.css";
+import { toast } from 'react-toastify';
 
 function Available() {
   // เดือนปัจจุบัน
@@ -16,8 +17,21 @@ function Available() {
   // วันที่เลือกล่าสุดเพื่อแสดงแถบเวลา
   const [currentDate, setCurrentDate] = useState(null);
 
+  // เก็บกลุ่มที่เลือก
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  
+  // เก็บรายการกลุ่ม
+  const [groups, setGroups] = useState([]);
+
   // สร้างช่วงเวลา 24 ชั่วโมง
-  const timeSlots = Array.from({ length: 24 }, (_, i) => `${i}:00 - ${i + 1}:00`);
+  const timeSlots = [
+    "00:00 - 01:00", "01:00 - 02:00", "02:00 - 03:00", "03:00 - 04:00",
+    "04:00 - 05:00", "05:00 - 06:00", "06:00 - 07:00", "07:00 - 08:00",
+    "08:00 - 09:00", "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00",
+    "12:00 - 13:00", "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00",
+    "16:00 - 17:00", "17:00 - 18:00", "18:00 - 19:00", "19:00 - 20:00",
+    "20:00 - 21:00", "21:00 - 22:00", "22:00 - 23:00", "23:00 - 00:00"
+  ];
 
   // เลือกวัน
   const handleDayClick = (date) => {
@@ -60,6 +74,202 @@ function Available() {
     setCurrentMonth(newDate);
   };
 
+  // ดึงข้อมูลกลุ่มเมื่อ component โหลด
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return;
+
+    const fetchGroups = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/group/user/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const data = await response.json();
+        setGroups(data || []);
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+        toast.error('Failed to load groups');
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
+  // ตรวจสอบเวลาที่ซ้ำกัน
+  const checkOverlap = async (userId, groupId, startTime, endTime) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/availability?userId=${userId}&groupId=${groupId}`);
+      if (!response.ok) throw new Error('Failed to check availability');
+      
+      const existingAvailabilities = await response.json();
+      const newStart = new Date(startTime).getTime();
+      const newEnd = new Date(endTime).getTime();
+
+      return existingAvailabilities.some(avail => {
+        const existingStart = new Date(avail.start_datetime).getTime();
+        const existingEnd = new Date(avail.end_datetime).getTime();
+        return (newStart < existingEnd && newEnd > existingStart);
+      });
+    } catch (error) {
+      console.error('Error checking overlap:', error);
+      return false;
+    }
+  };
+
+  // บันทึกวันและเวลาว่าง
+  const handleSaveAvailability = async () => {
+    if (!selectedGroup) {
+      toast.error('Please select a group first');
+      return;
+    }
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      toast.error('User not logged in');
+      return;
+    }
+
+    // สร้าง availability data
+    const availabilities = [];
+    
+    Object.entries(timeSelections).forEach(([date, times]) => {
+      times.forEach(time => {
+        // แยกเวลาเริ่มต้นและสิ้นสุด เช่น "01:00 - 02:00"
+        const [startTime, endTime] = time.split(' - ');
+        const [startHour] = startTime.split(':').map(Number);
+        
+        // แปลงวันที่เป็น UTC
+        const [year, month, day] = date.split('-').map(Number);
+        
+        // สร้าง Date object ด้วย UTC time
+        const startDate = new Date(Date.UTC(year, month - 1, day, startHour, 0, 0));
+        
+        // สร้าง Date object สำหรับเวลาสิ้นสุด
+        let endDate;
+        if (endTime === "00:00") {
+          // กรณีเที่ยงคืน ให้เป็นวันถัดไป
+          endDate = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
+        } else {
+          const [endHour] = endTime.split(':').map(Number);
+          endDate = new Date(Date.UTC(year, month - 1, day, endHour, 0, 0));
+        }
+
+        // แปลงเวลากลับเป็นเวลาท้องถิ่นสำหรับ note
+        const localStartDate = new Date(startDate);
+        const localEndDate = new Date(endDate);
+        const localStartTime = localStartDate.toLocaleTimeString('th-TH', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        });
+        const localEndTime = localEndDate.toLocaleTimeString('th-TH', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        });
+        
+        console.log('Debug - Time conversion:', {
+          date,
+          originalTime: time,
+          startLocal: localStartDate.toLocaleString('th-TH'),
+          endLocal: localEndDate.toLocaleString('th-TH'),
+          startUTC: startDate.toISOString(),
+          endUTC: endDate.toISOString()
+        });
+
+        console.log('Debug - Selected time:', {
+          originalTime: time,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        });
+
+        // ใช้เวลาจาก time slot โดยตรงเพราะเป็นเวลาท้องถิ่นอยู่แล้ว
+        availabilities.push({
+          user_id: parseInt(userId),
+          group_id: selectedGroup.id,
+          start_datetime: startDate.toISOString(),
+          end_datetime: endDate.toISOString(),
+          note: `Available on ${date} at ${time}`
+        });
+      });
+    });
+
+    // เก็บรายการเวลาที่ซ้ำ
+    const overlappingTimes = new Set();
+    
+    // ตรวจสอบการซ้ำทั้งหมดก่อน
+    for (const availability of availabilities) {
+      const isOverlap = await checkOverlap(
+        availability.user_id, 
+        availability.group_id,
+        availability.start_datetime,
+        availability.end_datetime
+      );
+
+      if (isOverlap) {
+        const localTime = new Date(availability.start_datetime).toLocaleTimeString('th-TH', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        });
+        overlappingTimes.add(localTime);
+      }
+    }
+
+    // แสดง toast error สำหรับเวลาที่ซ้ำทั้งหมดในครั้งเดียว
+    if (overlappingTimes.size > 0) {
+      const timeList = Array.from(overlappingTimes).join(", ");
+      toast.error(`Time slots already booked: ${timeList}`);
+    }
+
+    // บันทึกเฉพาะเวลาที่ไม่ซ้ำ
+    for (const availability of availabilities) {
+      try {
+        const isOverlap = await checkOverlap(
+          availability.user_id, 
+          availability.group_id,
+          availability.start_datetime,
+          availability.end_datetime
+        );
+
+        if (isOverlap) continue; // ข้ามการบันทึกถ้าซ้ำ
+
+        const response = await fetch('http://localhost:3000/api/availability', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify(availability)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+      } catch (error) {
+        console.error('Error saving availability:', error);
+        toast.error(`Failed to save availability for ${availability.start_datetime}`);
+        return; // ออกจากลูปถ้ามี error
+      }
+    }
+
+    // ถ้าบันทึกทั้งหมดสำเร็จ
+    toast.success('All availabilities saved successfully!');
+    // รีเซ็ตการเลือก
+    setSelectedDates([]);
+    setTimeSelections({});
+    setCurrentDate(null);
+    setSelectedGroup(null);
+  };
+
   return (
     <div className="display-calendar">
       <div className="calendar-layout">
@@ -90,7 +300,26 @@ function Available() {
 
         {/* แถบเวลา ขวา */}
         <div className="time-selector">
-          {!currentDate && <div style={{ color: "white" }}>Select Day</div>}
+          {/* Group selector */}
+          <div className="group-selector">
+            <div className="group-selector-header">Select Group</div>
+            <div className="groups-list">
+              {groups.map(group => (
+                <div
+                  key={group.id}
+                  className={`group-select-item ${selectedGroup?.id === group.id ? 'selected' : ''}`}
+                  onClick={() => setSelectedGroup(group)}
+                >
+                  {group.group_name}
+                </div>
+              ))}
+              {groups.length === 0 && (
+                <div className="no-groups">No groups available</div>
+              )}
+            </div>
+          </div>
+
+          {!currentDate && <div className="select-day-text">Select Day</div>}
           {currentDate && (
             <div className="time-list">
               <div className="time-date">{currentDate}</div>
@@ -109,6 +338,15 @@ function Available() {
           )}
         </div>
       </div>
+
+      {/* Save button */}
+      {selectedGroup && (selectedDates.length > 0 || Object.keys(timeSelections).length > 0) && (
+        <div className="save-container">
+          <button onClick={handleSaveAvailability} className="save-button">
+            Save Availability
+          </button>
+        </div>
+      )}
     </div>
   );
 }

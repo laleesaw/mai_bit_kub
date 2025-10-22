@@ -3,19 +3,31 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   // --- CORS headers ---
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
 
   // --- Preflight request ---
   if (req.method === "OPTIONS") {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   try {
     switch(req.method) {
       case "GET": {
-        const avails = await prisma.availability.findMany({ include: { user: true, group: true } });
+        // ถ้ามี userId และ groupId ในคิวรี่ ให้ดึงเฉพาะข้อมูลของ user และ group นั้น
+        const { userId, groupId } = req.query;
+        const whereClause = {};
+        
+        if (userId) whereClause.user_id = parseInt(userId);
+        if (groupId) whereClause.group_id = parseInt(groupId);
+        
+        const avails = await prisma.availability.findMany({ 
+          where: whereClause,
+          include: { user: true, group: true }
+        });
         // Serialize ข้อมูล
         const serialized = avails.map(a => ({
           availability_id: a.availability_id,
@@ -87,26 +99,4 @@ export default async function handler(req, res) {
     console.error("Error in /api/availability:", err);
     return res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
-}
-
-// ส่งข้อมูลไปบันทึก
-const response = await fetch('http://localhost:3000/api/availability', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        user_id: parseInt(userId),
-        group_id: 1, // ตรวจสอบว่า group_id นี้มีอยู่จริงในฐานข้อมูล
-        start_datetime: startDateTime.toISOString(),
-        end_datetime: endDateTime.toISOString(),
-        note: "" // เพิ่ม note เป็นค่าว่าง
-    })
-});
-
-// เพิ่มการ log error detail
-if (!response.ok) {
-    const errorData = await response.json();
-    console.error('API Error:', errorData);
-    throw new Error(errorData.message || 'Failed to save availability');
 }

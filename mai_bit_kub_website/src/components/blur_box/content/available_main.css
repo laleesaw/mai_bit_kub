@@ -83,6 +83,96 @@
 /* ==========================
    ปฏิทินวันตรงกลาง
 ========================== */
+.group-selector {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.group-selector-header {
+  color: #ff647c;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+}
+
+.groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.groups-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.groups-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.groups-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.group-select-item {
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.group-select-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.group-select-item.selected {
+  background-color: #ff647c;
+}
+
+.no-groups {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  padding: 0.5rem;
+  font-style: italic;
+}
+
+.select-day-text {
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  padding: 1rem;
+  font-style: italic;
+}
+
+.save-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.save-button {
+  padding: 0.75rem 2rem;
+  background-color: #ff647c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: #ff4f6b;
+}
+
 .calendar-container {
   flex: 1;
   border-radius: 16px;

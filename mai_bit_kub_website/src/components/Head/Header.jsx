@@ -35,6 +35,8 @@ function Header(){
     const [showCreateGroup, setShowCreateGroup] = useState(false);
     const [newGroupName, setNewGroupName] = useState('');
     const [maxMembers, setMaxMembers] = useState(10);
+    const [showJoinGroup, setShowJoinGroup] = useState(false);
+    const [joinCode, setJoinCode] = useState('');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -76,6 +78,42 @@ function Header(){
         }
     };
 
+    const handleJoinGroup = async (e) => {
+        e.preventDefault();
+        try {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                toast.error('Please login first');
+                return;
+            }
+
+            const res = await fetch('http://localhost:3000/api/group/joincode', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    join_code: joinCode.toUpperCase(),
+                    user_id: parseInt(userId)
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                toast.error(data.message || 'Failed to join group');
+                return;
+            }
+
+            toast.success(`Successfully joined ${data.group_name}!`);
+            // Dispatch event to notify GroupList
+            window.dispatchEvent(new Event('groupCreated'));
+            setJoinCode('');
+            setShowJoinGroup(false);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to join group');
+        }
+    };
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -100,12 +138,20 @@ function Header(){
             {/* ปุ่มด้านขวา */}
             <div className="button_bar">
                 {isSignedIn && isMainPage && (
-                    <button 
-                        className="create-group-btn"
-                        onClick={() => setShowCreateGroup(true)}
-                    >
-                        Create Group
-                    </button>
+                    <>
+                        <button 
+                            className="create-group-btn"
+                            onClick={() => setShowCreateGroup(true)}
+                        >
+                            Create Group
+                        </button>
+                        <button 
+                            className="join-group-btn"
+                            onClick={() => setShowJoinGroup(true)}
+                        >
+                            Join Group
+                        </button>
+                    </>
                 )}
                 <div 
                     onClick={() => {
@@ -172,6 +218,36 @@ function Header(){
                             <div className="modal-buttons">
                                 <button type="submit">Create</button>
                                 <button type="button" onClick={() => setShowCreateGroup(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal เข้าร่วมกลุ่ม */}
+            {showJoinGroup && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Join Group</h2>
+                        <form onSubmit={handleJoinGroup}>
+                            <div className="form-group">
+                                <label>Join Code:</label>
+                                <input
+                                    type="text"
+                                    value={joinCode}
+                                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                                    placeholder="Enter 8-character code"
+                                    maxLength="8"
+                                    required
+                                    style={{ textTransform: 'uppercase' }}
+                                />
+                            </div>
+                            <div className="modal-buttons">
+                                <button type="submit">Join</button>
+                                <button type="button" onClick={() => {
+                                    setShowJoinGroup(false);
+                                    setJoinCode('');
+                                }}>Cancel</button>
                             </div>
                         </form>
                     </div>
