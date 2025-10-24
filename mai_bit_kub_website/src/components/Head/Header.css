@@ -90,6 +90,28 @@ header {
     align-items: center;
 }
 
+.profile-button-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-image-header {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #EA5B6F;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.profile-image-header:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(234, 91, 111, 0.5);
+}
+
 .profile-dropdown {
     position: absolute;
     top: 100%; /* อยู่ใต้ปุ่ม profile */
@@ -293,6 +315,19 @@ header {
     box-shadow: 0 6px 20px rgba(107, 127, 234, 0.6);
 }
 
+.modal-content.join-modal .modal-buttons button[type="button"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(107, 127, 234, 0.3);
+}
+
+.modal-content.join-modal .modal-buttons button[type="button"]:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 127, 234, 0.5);
+}
+
 /* Create Group Modal - Pink Theme */
 .modal-content.create-modal {
     background: rgba(234, 91, 111, 0.12);
@@ -324,4 +359,17 @@ header {
 .modal-content.create-modal .modal-buttons button[type="submit"]:hover {
     background: linear-gradient(135deg, #ff6b7f, #ff7a8f);
     box-shadow: 0 6px 20px rgba(234, 91, 111, 0.6);
+}
+
+.modal-content.create-modal .modal-buttons button[type="button"] {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(234, 91, 111, 0.3);
+}
+
+.modal-content.create-modal .modal-buttons button[type="button"]:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 91, 111, 0.5);
 }

@@ -14,7 +14,8 @@ body {
     linear-gradient(to bottom left, rgba(255, 203, 97, 0.2), rgba(255, 203, 97, 0)),
     url('/background.png'),
     #FFFBDE;
-  background-size: auto, auto, auto, auto,461px 576px, auto;
+  background-size: auto, auto, auto, auto, 461px 576px, auto;
   background-position: center, center, center, center, 902px 202px, center;
   background-repeat: no-repeat;
+  background-attachment: fixed;
 }

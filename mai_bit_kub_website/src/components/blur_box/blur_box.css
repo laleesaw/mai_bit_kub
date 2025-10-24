@@ -25,6 +25,7 @@
     transition: background-color 0.5s, transform 0.5s;
     transform-origin: center;
     overflow-y: auto;           /* ✅ ให้ scroll ได้เมื่อเนื้อหาเกิน */
+    overflow-x: hidden;         /* ✅ ไม่ให้ scroll ซ้ายขวา */
     scrollbar-width: thin;      /* ✅ สำหรับ Firefox */
     scrollbar-color: #ea5b6f80 #ffffff20;
 }

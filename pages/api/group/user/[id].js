@@ -17,7 +17,7 @@ export default async function handler(req, res) {
                     OR: [
                         { created_by: userId },
                         {
-                            members: {
+                            groupmember: {
                                 some: {
                                     user_id: userId
                                 }
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
                     ]
                 },
                 include: {
-                    members: true
+                    groupmember: true
                 }
             });
 
@@ -35,14 +35,14 @@ export default async function handler(req, res) {
             // Format the response
             const formattedGroups = groups.map(group => {
                 // Check if creator is already in members list
-                const creatorInMembers = group.members.some(member => member.user_id === group.created_by);
+                const creatorInMembers = group.groupmember.some(member => member.user_id === group.created_by);
                 
                 return {
                     id: group.group_id,
                     group_name: group.group_name,
                     max_members: group.max_members,
                     // Only add +1 if creator is not in members list
-                    current_members: group.members.length + (creatorInMembers ? 0 : 1),
+                    current_members: group.groupmember.length + (creatorInMembers ? 0 : 1),
                     created_by: group.created_by,
                     join_code: group.join_code
                 };

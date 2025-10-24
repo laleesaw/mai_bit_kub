@@ -37,6 +37,7 @@ function Header(){
     const [maxMembers, setMaxMembers] = useState(10);
     const [showJoinGroup, setShowJoinGroup] = useState(false);
     const [joinCode, setJoinCode] = useState('');
+    const [profileImage, setProfileImage] = useState(null);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -128,6 +129,37 @@ function Header(){
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showProfileMenu]);
 
+    useEffect(() => {
+        const fetchProfileImage = async () => {
+            if (isSignedIn) {
+                try {
+                    const userId = localStorage.getItem('userId');
+                    if (userId) {
+                        const response = await fetch(`http://localhost:3000/api/user/${userId}`);
+                        if (response.ok) {
+                            const userData = await response.json();
+                            setProfileImage(userData.profile_image);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile image:', error);
+                }
+            }
+        };
+
+        fetchProfileImage();
+
+        // Listen for profile updates
+        const handleProfileUpdate = () => {
+            fetchProfileImage();
+        };
+        window.addEventListener('profileUpdated', handleProfileUpdate);
+
+        return () => {
+            window.removeEventListener('profileUpdated', handleProfileUpdate);
+        };
+    }, [isSignedIn]);
+
     return (
         <header>
             {/* Logo */}
@@ -171,9 +203,18 @@ function Header(){
                     <div className="profile_button" ref={profileRef}>
                         <div 
                             onClick={() => setShowProfileMenu((v) => !v)}
+                            className="profile-button-wrapper"
                             style={{cursor: 'pointer'}}
                         >
-                            {button(profile_first, profile_second)}
+                            {profileImage ? (
+                                <img 
+                                    src={profileImage} 
+                                    alt="Profile" 
+                                    className="profile-image-header"
+                                />
+                            ) : (
+                                button(profile_first, profile_second)
+                            )}
                         </div>
                         {showProfileMenu && (
                             <div className="profile-dropdown">
