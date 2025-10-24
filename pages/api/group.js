@@ -9,11 +9,11 @@ function serializeGroup(group) {
     max_members: group.max_members,
     created_by: group.created_by,
     join_code: group.join_code,
-    creator: group.creator
-      ? { user_id: group.creator.user_id, name: group.creator.name, email: group.creator.email }
+    creator: group.user
+      ? { user_id: group.user.user_id, name: group.user.name, email: group.user.email }
       : null,
-    members: group.members ? group.members.map(m => ({ user_id: m.user_id, role: m.role })) : [],
-    availabilities: group.availabilities ? group.availabilities.map(a => ({
+    members: group.groupmember ? group.groupmember.map(m => ({ user_id: m.user_id, role: m.role })) : [],
+    availabilities: group.availability ? group.availability.map(a => ({
       user_id: a.user_id,
       start_datetime: a.start_datetime,
       end_datetime: a.end_datetime
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     switch (req.method) {
       case "GET": {
         const groups = await prisma.group.findMany({
-          include: { creator: true, members: true, availabilities: true },
+          include: { user: true, groupmember: true, availability: true },
         });
         return res.status(200).json(groups.map(serializeGroup));
       }
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           });
 
           // Add creator as a member with 'admin' role
-          await prisma.groupMember.create({
+          await prisma.groupmember.create({
             data: {
               user_id: created_by,
               group_id: group.group_id,
@@ -79,7 +79,7 @@ export default async function handler(req, res) {
         });
         const fullGroup = await prisma.group.findUnique({
           where: { group_id: newGroup.group_id },
-          include: { creator: true, members: true, availabilities: true }
+          include: { user: true, groupmember: true, availability: true }
         });
         return res.status(201).json(serializeGroup(fullGroup));
       }
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
         const updatedGroup = await prisma.group.update({
           where: { group_id },
           data: { group_name: newName },
-          include: { creator: true, members: true, availabilities: true }
+          include: { user: true, groupmember: true, availability: true }
         });
         return res.status(200).json(serializeGroup(updatedGroup));
       }

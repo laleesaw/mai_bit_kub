@@ -7,7 +7,12 @@ function serializeGroupMember(member) {
     user_id: member.user_id,
     group_id: member.group_id,
     role: member.role,
-    user: member.user ? { user_id: member.user.user_id, name: member.user.name, email: member.user.email } : null,
+    user: member.user ? { 
+      user_id: member.user.user_id, 
+      name: member.user.name, 
+      email: member.user.email,
+      profile_image: member.user.profile_image 
+    } : null,
     group: member.group ? { group_id: member.group.group_id, name: member.group.name } : null,
   };
 }
@@ -31,7 +36,7 @@ export default async function handler(req, res) {
         // ถ้ามี groupId ให้กรองตาม group_id
         const whereClause = groupId ? { group_id: parseInt(groupId) } : {};
         
-        const members = await prisma.groupMember.findMany({ 
+        const members = await prisma.groupmember.findMany({ 
           where: whereClause,
           include: { user: true, group: true } 
         });
@@ -43,10 +48,10 @@ export default async function handler(req, res) {
         if (!user_id || !group_id || !role) {
           return res.status(400).json({ message: "Missing user_id, group_id, or role" });
         }
-        const newMember = await prisma.groupMember.create({
+        const newMember = await prisma.groupmember.create({
           data: { user_id, group_id, role },
         });
-        const fullMember = await prisma.groupMember.findUnique({
+        const fullMember = await prisma.groupmember.findUnique({
           where: { user_id_group_id: { user_id, group_id } },
           include: { user: true, group: true }
         });
@@ -58,7 +63,7 @@ export default async function handler(req, res) {
         if (!user_id || !group_id || !role) {
           return res.status(400).json({ message: "Missing user_id, group_id, or role" });
         }
-        const updatedMember = await prisma.groupMember.update({
+        const updatedMember = await prisma.groupmember.update({
           where: { user_id_group_id: { user_id, group_id } },
           data: { role },
           include: { user: true, group: true }
@@ -71,7 +76,7 @@ export default async function handler(req, res) {
         if (!user_id || !group_id) {
           return res.status(400).json({ message: "Missing user_id or group_id" });
         }
-        await prisma.groupMember.delete({ where: { user_id_group_id: { user_id, group_id } } });
+        await prisma.groupmember.delete({ where: { user_id_group_id: { user_id, group_id } } });
         return res.status(200).json({ message: "Group member deleted" });
       }
 
