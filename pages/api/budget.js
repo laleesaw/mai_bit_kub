@@ -114,11 +114,20 @@ export default async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET": {
-        const budgets = await prisma.budget.findMany({ include: { user: true } });
+        const budgets = await prisma.budget.findMany({ 
+          include: { 
+            user: {
+              select: {
+                user_id: true,
+                email: true,
+                name: true
+              }
+            } 
+          } 
+        });
         const serialized = budgets.map(b => ({
           budget_id: b.budget_id,
           user_id: b.user_id,
-          min_budget: Number(b.min_budget),
           max_budget: Number(b.max_budget),
           user: b.user ? { user_id: b.user.user_id, email: b.user.email, name: b.user.name } : null
         }));

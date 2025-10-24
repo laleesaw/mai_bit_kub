@@ -31,9 +31,23 @@ export default async function handler(req, res) {
         // ถ้ามี groupId ให้กรองตาม group_id
         const whereClause = groupId ? { group_id: parseInt(groupId) } : {};
         
-        const members = await prisma.groupMember.findMany({ 
+        const members = await prisma.groupmember.findMany({ 
           where: whereClause,
-          include: { user: true, group: true } 
+          include: { 
+            user: {
+              select: {
+                user_id: true,
+                name: true,
+                email: true
+              }
+            }, 
+            group: {
+              select: {
+                group_id: true,
+                group_name: true
+              }
+            } 
+          } 
         });
         return res.status(200).json(members.map(serializeGroupMember));
       }
@@ -43,10 +57,10 @@ export default async function handler(req, res) {
         if (!user_id || !group_id || !role) {
           return res.status(400).json({ message: "Missing user_id, group_id, or role" });
         }
-        const newMember = await prisma.groupMember.create({
+        const newMember = await prisma.groupmember.create({
           data: { user_id, group_id, role },
         });
-        const fullMember = await prisma.groupMember.findUnique({
+        const fullMember = await prisma.groupmember.findUnique({
           where: { user_id_group_id: { user_id, group_id } },
           include: { user: true, group: true }
         });

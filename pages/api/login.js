@@ -6,8 +6,7 @@ function serializeUser(user) {
     user_id: user.user_id,
     email: user.email,
     name: user.name,
-    createdAt: user.createdAt?.toISOString(),
-    updatedAt: user.updatedAt?.toISOString(),
+    created_at: user.created_at?.toISOString()
   };
 }
 
@@ -32,7 +31,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ 
+      where: { email },
+      select: {
+        user_id: true,
+        email: true,
+        password: true,
+        name: true,
+        created_at: true
+      }
+    });
 
     if (!user || user.password !== password) {
       return res.status(401).json({ message: "Invalid email or password" });
