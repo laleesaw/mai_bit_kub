@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './EditProfile.css';
+import defaultProfileImage from '../assets/profile_icon_main.png';
 
 function EditProfile() {
     const navigate = useNavigate();
@@ -177,7 +178,7 @@ function EditProfile() {
                             {previewImage ? (
                                 <img src={previewImage} alt="Profile Preview" />
                             ) : (
-                                <div className="no-image">No Image</div>
+                                <img src={defaultProfileImage} alt="Default Profile" />
                             )}
                         </div>
                         <input
