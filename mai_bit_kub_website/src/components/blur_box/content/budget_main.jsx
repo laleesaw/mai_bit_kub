@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import "./budget_main.css";
 import Budget_main from "../../../assets/budget_icon.png";
 
@@ -16,7 +17,7 @@ function Budget() {
 
   const handleSave = async () => {
     if (!userId) {
-      alert("No user selected!");
+      toast.error("No user selected!");
       return;
     }
 
@@ -24,7 +25,7 @@ function Budget() {
     const max = parseFloat(maxBudget) || 0;
 
     if (min >= max) {
-      alert("Min budget must be less than Max budget!");
+      toast.error("Min budget must be less than Max budget!");
       return;
     }
 
@@ -44,10 +45,10 @@ function Budget() {
       const result = await res.json();
       console.log("Budget saved:", result);
       setIsSaved(true);
-      alert("Budget saved successfully!");
+      toast.success("Budget saved successfully!");
     } catch (err) {
       console.error("Error saving budget:", err);
-      alert("Error saving budget: " + err.message);
+      toast.error("Error saving budget: " + err.message);
     }
   };
 
