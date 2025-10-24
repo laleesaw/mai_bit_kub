@@ -38,6 +38,8 @@ function GroupAvailability() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const data = await response.json();
+      console.log('API Response:', data);
+      console.log('Availabilities:', data.availabilities);
       setGroupInfo(data.group);
       setGroupAvailability(data.availabilities || []);
       setLoading(false);
@@ -59,12 +61,14 @@ function GroupAvailability() {
   };
 
   const formatTime = (dateString) => {
+    console.log('Input dateString:', dateString);
     const date = new Date(dateString);
-    return date.toLocaleTimeString('th-TH', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
+    console.log('Parsed date:', date);
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}`;
+    console.log('Formatted time:', formattedTime);
+    return formattedTime;
   };
 
   const groupByDate = (availabilities) => {
@@ -94,15 +98,16 @@ function GroupAvailability() {
   return (
     <div className="group-availability-container">
       <div className="availability-header">
-        <button onClick={() => navigate(-1)} className="back-button">
-          ← Back
-        </button>
-        <h1>Group Availability</h1>
+        <div className="header-top">
+          <button onClick={() => navigate(-1)} className="back-button">←</button>
+          <h1>{groupInfo ? groupInfo.group_name : 'Loading...'}</h1>
+        </div>
         {groupInfo && (
           <div className="group-info">
-            <h2>{groupInfo.group_name}</h2>
-            <p>Max Members: {groupInfo.max_members}</p>
-            <p>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</p>
+            <div className="group-details">
+              <span>Max Members: {groupInfo.max_members}</span>
+              <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</span>
+            </div>
           </div>
         )}
       </div>
