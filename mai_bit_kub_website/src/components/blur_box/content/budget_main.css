@@ -15,7 +15,8 @@
 .amount-container {
   display: flex;
   margin-top: 15px;
-  background-color: #FFFBDE;
+  background-color: rgba(255, 251, 222, 0.55);
+  backdrop-filter: blur(30px);
   border-radius: 40px;
   justify-content: center;
   align-items: center;
@@ -40,7 +41,7 @@
 
 /* gap when disabled */
 .amount-container.disabled::before {
-  background-color: #FFFBDE;
+  background-color: rgba(255, 251, 222, 0.65);
 }
 
 .budget-wrapper {
@@ -56,7 +57,7 @@
   height: 50px;
   border: none;
   text-align: center;
-  padding-right: 30px;
+  padding: 0 30px;
   font-size: 24px;
   font-weight: bold;
   outline: none;
