@@ -64,11 +64,8 @@
   color: white;
   cursor: pointer;
   margin: 6px 0;
-  transition: 0.2s;
-}
-
-.arrow-btn:hover {
-  color: #ffb3bb;
+  /* transition: 0.2s; */
+  width: 100%;
 }
 
 /* ชื่อเดือน */
