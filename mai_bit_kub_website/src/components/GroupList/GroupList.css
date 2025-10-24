@@ -231,8 +231,8 @@
     background: linear-gradient(135deg, #EA5B6F, #ff6b7f);
     color: white;
     border: none;
-    font-size: 32px;
-    font-weight: 300;
+    font-size: 40px;
+    font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(234, 91, 111, 0.4);
     transition: all 0.3s ease;
@@ -241,11 +241,14 @@
     align-items: center;
     justify-content: center;
     padding: 0;
-    line-height: 0;
+    padding-bottom: 4px;
+    margin: 0;
+    line-height: 1;
 }
 
 .group-list-container .fab-button:hover {
     transform: scale(1.1) rotate(90deg);
+    padding-bottom: 4px;
     box-shadow: 0 6px 25px rgba(234, 91, 111, 0.6);
     background: linear-gradient(135deg, #ff6b7f, #ff7a8f);
 }
@@ -289,24 +292,25 @@
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
     min-width: 120px;
+    backdrop-filter: blur(20px);
 }
 
 .group-list-container .fab-menu-item.create {
-    background: linear-gradient(135deg, #EA5B6F, #ff6b7f);
+    background: rgba(234, 91, 111, 0.6);
 }
 
 .group-list-container .fab-menu-item.create:hover {
-    background: linear-gradient(135deg, #ff6b7f, #ff7a8f);
+    background: rgba(255, 107, 127, 0.75);
     transform: translateX(-5px);
     box-shadow: 0 5px 15px rgba(234, 91, 111, 0.5);
 }
 
 .group-list-container .fab-menu-item.join {
-    background: linear-gradient(135deg, #6B7FEA, #7f8fff);
+    background: rgba(107, 127, 234, 0.6);
 }
 
 .group-list-container .fab-menu-item.join:hover {
-    background: linear-gradient(135deg, #7f8fff, #8f9fff);
+    background: rgba(127, 143, 255, 0.75);
     transform: translateX(-5px);
     box-shadow: 0 5px 15px rgba(107, 127, 234, 0.5);
 }
