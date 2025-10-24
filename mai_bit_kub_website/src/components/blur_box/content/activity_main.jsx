@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 import "./activity_main.css";
+
+import Create_icon from "../../../assets/create.png";
+
 import Sport_icon from "../../../assets/sport.png";
 import Music_icon from "../../../assets/music.png";
 import Indoor_icon from "../../../assets/indoor.png";
 import Adventure_icon from "../../../assets/adventure.png";
 import Back from "../../../assets/back.png";
 
-import Create_icon from "../../../assets/create.png";
 
-
+import Biking_icon from "../../../assets/biking_icon.png";
+import Dancing_icon from "../../../assets/dancing_icon.png";
+import Drawing_icon from "../../../assets/drawing_icon.png";
+import Hiking_icon from "../../../assets/hiking_icon.png";
+import Serfing_icon from "../../../assets/serfing_icon.png";
+import Singing_icon from "../../../assets/singing_icon.png";
 import Pingpong_icon from "../../../assets/pingpong.png";
 import Boxing_icon from "../../../assets/boxing.png";
 import Swimming_icon from "../../../assets/water.png";
@@ -26,12 +33,16 @@ const mainActivities = [
       { name: "PINGPONG", icon: Pingpong_icon },
       { name: "BOXING", icon: Boxing_icon },
       { name: "SWIMMING", icon: Swimming_icon },
+      { name: "SERFING", icon: Serfing_icon }
     ],
   },
   {
     name: "MUSIC",
     icon: Music_icon,
-    subActivities: [],
+    subActivities: [
+      { name: "SINGING", icon: Singing_icon },
+      { name: "DANCING", icon: Dancing_icon },
+    ],
   },
   {
     name: "INDOOR",
@@ -41,13 +52,17 @@ const mainActivities = [
   {
     name: "ADVENTURE",
     icon: Adventure_icon,
-    subActivities: [],
+    subActivities: [
+      { name: "HIKING", icon: Hiking_icon },
+      { name: "BIKING", icon: Biking_icon },
+    ],
   },
   {
     name: "CREATE",
     icon: Create_icon,
     subActivities: [
       { name: "PHOTOGRAPHY", icon: Photography_icon },
+      { name: "DRAWING", icon: Drawing_icon },
     ],
   },
 ];
