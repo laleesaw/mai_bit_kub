@@ -1,6 +1,6 @@
 .edit-profile-container {
     max-width: 600px;
-    margin: 40px auto;
+    margin: 20px auto;
     padding: 20px;
     background: rgba(234, 91, 111, 0.08);
     border-radius: 12px;
@@ -49,7 +49,7 @@
 .edit-profile-buttons {
     display: flex;
     gap: 15px;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 20px;
 }
 
@@ -86,4 +86,60 @@
     color: #ff3f3f;
     font-size: 14px;
     margin-top: 4px;
+}
+
+.profile-image-section {
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-image-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-image-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #EA5B6F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.profile-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-image-preview .no-image {
+    color: #EA5B6F;
+    font-size: 14px;
+    text-align: center;
+}
+
+.upload-button {
+    padding: 10px 24px;
+    background-color: #EA5B6F;
+    color: white !important;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.upload-button:hover {
+    background-color: #ff6b7f;
+    transform: translateY(-2px);
+    color: white !important;
 }
