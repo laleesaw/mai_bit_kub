@@ -37,6 +37,54 @@ function Header(){
     const [maxMembers, setMaxMembers] = useState(10);
     const [showJoinGroup, setShowJoinGroup] = useState(false);
     const [joinCode, setJoinCode] = useState('');
+    const [showGroupsDropdown, setShowGroupsDropdown] = useState(false);
+    const [userGroups, setUserGroups] = useState([]);
+    const groupsDropdownRef = useRef(null);
+
+    // ดึงข้อมูลกลุ่มของ user
+    useEffect(() => {
+        const fetchUserGroups = async () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/group/user/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserGroups(data || []);
+                }
+            } catch (error) {
+                console.error('Error fetching user groups:', error);
+            }
+        };
+
+        if (isSignedIn) {
+            fetchUserGroups();
+        }
+
+        // Listen for group updates
+        const handleGroupUpdate = () => fetchUserGroups();
+        window.addEventListener('groupCreated', handleGroupUpdate);
+        
+        return () => {
+            window.removeEventListener('groupCreated', handleGroupUpdate);
+        };
+    }, [isSignedIn]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (groupsDropdownRef.current && !groupsDropdownRef.current.contains(event.target)) {
+                setShowGroupsDropdown(false);
+            }
+        }
+        if (showGroupsDropdown) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showGroupsDropdown]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -153,6 +201,45 @@ function Header(){
                         </button>
                     </>
                 )}
+                
+                {/* Dropdown สำหรับดู Group Availability - แสดงเฉพาะในหน้า main_page */}
+                {isSignedIn && isMainPage && (
+                    <div className="groups-dropdown-container" ref={groupsDropdownRef}>
+                        <button 
+                            className="view-availability-btn"
+                            onClick={() => setShowGroupsDropdown(!showGroupsDropdown)}
+                        >
+                            📅 View Availability
+                        </button>
+                        {showGroupsDropdown && (
+                            <div className="groups-dropdown-menu">
+                                <div className="dropdown-header">Select Group</div>
+                                {userGroups.length > 0 ? (
+                                    userGroups.map(group => (
+                                        <div
+                                            key={group.id}
+                                            className="dropdown-group-item"
+                                            onClick={() => {
+                                                navigate('/group-availability', { 
+                                                    state: { groupId: group.id } 
+                                                });
+                                                setShowGroupsDropdown(false);
+                                            }}
+                                        >
+                                            <span className="group-name">{group.group_name}</span>
+                                            <span className="group-members">
+                                                {group.current_members}/{group.max_members}
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="dropdown-no-groups">No groups available</div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+                
                 <div 
                     onClick={() => {
                         if (isSignedIn) {
