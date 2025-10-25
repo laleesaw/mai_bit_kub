@@ -13,6 +13,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+async function addUserActivity(activityName) {
+  try {
+    // 1️⃣ ดึง activity จากชื่อ เพื่อหา activity_id
+    const resAct = await fetch(`/api/activity/by-name?name=${encodeURIComponent(activityName)}`);
+    const activity = await resAct.json();
+
+    if (!activity?.activity_id) {
+      console.error("Activity not found:", activityName);
+      alert("ไม่พบกิจกรรมนี้ในฐานข้อมูล");
+      return;
+    }
+
+    // 2️⃣ ส่งข้อมูลไปบันทึกใน userActivity
+    const resUA = await fetch("/api/userActivity", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: 1, // ← เปลี่ยนเป็น user id จริงของคุณ
+        activity_id: activity.activity_id,
+        preference_level: 1,
+      }),
+    });
+
+    const data = await resUA.json();
+    console.log("✅ Added:", data);
+    alert("เพิ่มกิจกรรมสำเร็จ!");
+  } catch (err) {
+    console.error("❌ Error adding activity:", err);
+    alert("เกิดข้อผิดพลาดในการเพิ่มกิจกรรม");
+  }
+}
+
+
 export default function Home() {
   return (
     <>
@@ -66,6 +99,7 @@ export default function Home() {
               Read our docs
             </a>
           </div>
+
         </main>
         <footer className={styles.footer}>
           <a
