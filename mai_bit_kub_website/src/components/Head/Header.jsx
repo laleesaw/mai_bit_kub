@@ -1,6 +1,6 @@
 import './Header.css'
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import menu_first from '../../assets/menu.png'
 import menu_second from '../../assets/menu_second.png'
@@ -26,10 +26,11 @@ function Header(){
     const username = localStorage.getItem('username');
     const isSignedIn = !!username;
     const navigate = useNavigate();
+    const location = useLocation();
+    const isMainPage = location.pathname === '/main_page';
 
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const profileRef = useRef(null);
-    const navigate = useNavigate();
     const [showCreateGroup, setShowCreateGroup] = useState(false);
     const [newGroupName, setNewGroupName] = useState('');
     const [maxMembers, setMaxMembers] = useState(10);
