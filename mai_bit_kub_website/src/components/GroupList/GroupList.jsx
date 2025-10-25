@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { toast } from 'react-toastify';
 import './GroupList.css';
+import Add_icon from '../../assets/add_icon.png';
+import Bin_icon from '../../assets/bin_icon.png';
+
 
 function GroupList() {
     const [groups, setGroups] = useState([]);
@@ -15,6 +18,7 @@ function GroupList() {
     const [newGroupName, setNewGroupName] = useState('');
     const [maxMembers, setMaxMembers] = useState(10);
     const [joinCode, setJoinCode] = useState('');
+    
 
     const fetchGroups = async () => {
         if (!userId) {
@@ -223,13 +227,15 @@ function GroupList() {
                 {/* Floating Action Button */}
                 <button 
                     className="fab-button"
-                    onClick={() => setShowFabMenu(!showFabMenu)}
-                >+</button>
+                    onClick={() => setShowFabMenu(!showFabMenu)}>
+                    <img src = {Add_icon}></img>
+                </button>
 
                 {/* FAB Menu */}
                 {showFabMenu && (
                     <div className="fab-menu">
-                        <button 
+                        <div className='create-join'>
+                            <button 
                             className="fab-menu-item create"
                             onClick={() => {
                                 setShowCreateGroup(true);
@@ -247,6 +253,9 @@ function GroupList() {
                         >
                             Join Group
                         </button>
+                        </div>
+
+                
                     </div>
                 )}
             </div>
