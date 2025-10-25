@@ -122,7 +122,8 @@
 }
 
 .save-btn {
-  margin-top: 0px;
+  /* keep a consistent 10px gap from the inputs/notice above */
+  margin-top: 10px;
   padding: 10px 20px;
   border: 2px solid #EA5B6F;
   background-color: #EA5B6F;
@@ -178,6 +179,11 @@
   justify-content: flex-end;
   align-items: center;
   padding-right: 12px; /* small gap from the right edge */
+  /* ensure notice doesn't add extra vertical spacing
+     so the button's margin-top determines the gap */
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 .notice span{
   font-size: 16px;

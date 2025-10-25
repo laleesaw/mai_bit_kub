@@ -10,6 +10,7 @@ function Budget() {
   const [userId, setUserId] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
   const [minAllowed, setMinAllowed] = useState(0);
+  const [showMaxNotice, setShowMaxNotice] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
@@ -189,13 +190,17 @@ function Budget() {
             onChange={handleMaxBudgetChange}
             disabled={isSaved}
             min={minAllowed || undefined}
+            onFocus={() => { if (minAllowed && Number(minAllowed) > 0) setShowMaxNotice(true); }}
+            onBlur={() => setShowMaxNotice(false)}
           />
           <span className="currency">฿</span>
         </div>
       </div>
-      <div className="notice" style={{ color: parseFloat(minBudget || 0) < minAllowed ? '#b00020' : '#333' }}>
-        <span>more than: {minAllowed} ฿</span>
-      </div>
+      {showMaxNotice && minAllowed > 0 ? (
+        <div className="notice" style={{ color: parseFloat(minBudget || 0) < minAllowed ? '#b00020' : '#333' }}>
+          <span>more than: {minAllowed} ฿</span>
+        </div>
+      ) : null}
       {/* Debug panel to show budget-related state for troubleshooting */}
       {/* <div style={{ marginTop: 8, padding: 8, background: '#f7f7f7', borderRadius: 6, fontSize: 12 }}>
         <strong>DEBUG</strong>
