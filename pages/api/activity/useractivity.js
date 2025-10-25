@@ -31,7 +31,13 @@ export default async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET": {
+        // support optional filtering by userId
+        const { userId } = req.query;
+        const where = {};
+        if (userId) where.user_id = parseInt(userId, 10);
+
         const uas = await prisma.useractivity.findMany({
+          where,
           include: { user: true, activity: true },
         });
         return res.status(200).json(uas.map(serializeUserActivity));

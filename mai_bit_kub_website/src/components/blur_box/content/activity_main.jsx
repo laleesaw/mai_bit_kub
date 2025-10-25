@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import "./activity_main.css";
 
 import Create_icon from "../../../assets/create.png";
@@ -73,6 +74,7 @@ const mainActivities = [
 ];
 function Activity() {
   const [selectedActivity, setSelectedActivity] = useState(null);
+  const [userActivities, setUserActivities] = useState(new Set());
 
   // เพิ่มกิจกรรมให้ user โดยคลิกที่ subActivity (toggle behavior)
   async function addUserActivity(activityName) {
@@ -112,6 +114,12 @@ function Activity() {
         if (!resDel.ok) {
           throw new Error(`Failed to remove activity: ${resDel.status}`);
         }
+        // update local selected set
+        setUserActivities(prev => {
+          const s = new Set(prev);
+          s.delete(activityName);
+          return s;
+        });
         console.log('✅ Removed activity (toggled off)');
         return;
       }
@@ -119,10 +127,35 @@ function Activity() {
       if (!resUA.ok) throw new Error(`UserActivity API error: ${resUA.status}`);
       const data = await resUA.json();
       console.log("✅ Added activity:", data);
+      // update local selected set
+      setUserActivities(prev => {
+        const s = new Set(prev);
+        s.add(activityName);
+        return s;
+      });
     } catch (err) {
       console.error("❌ Error adding activity:", err);
     }
   }
+
+  // fetch user's existing activities to mark selected sub-cards
+  useEffect(() => {
+    const fetchUserActivities = async () => {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+      try {
+        const res = await fetch(`/api/activity/useractivity?userId=${userId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const names = data.map(u => u.activity?.name).filter(Boolean);
+        setUserActivities(new Set(names));
+      } catch (e) {
+        console.error('Failed to load user activities', e);
+      }
+    };
+
+    fetchUserActivities();
+  }, []);
 
   return (
     <div className="display">
@@ -149,7 +182,7 @@ function Activity() {
             {selectedActivity.subActivities.map((sub, idx) => (
               <div
                 key={idx}
-                className="sub_card"
+                className={`sub_card ${userActivities.has(sub.name) ? 'selected' : ''}`}
                 onClick={() => addUserActivity(sub.name)}
                 style={{ cursor: "pointer" }}
               >
