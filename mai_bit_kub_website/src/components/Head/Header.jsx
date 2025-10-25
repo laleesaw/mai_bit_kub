@@ -32,11 +32,6 @@ function Header(){
 
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const profileRef = useRef(null);
-    const [showCreateGroup, setShowCreateGroup] = useState(false);
-    const [newGroupName, setNewGroupName] = useState('');
-    const [maxMembers, setMaxMembers] = useState(10);
-    const [showJoinGroup, setShowJoinGroup] = useState(false);
-    const [joinCode, setJoinCode] = useState('');
     const [showGroupsDropdown, setShowGroupsDropdown] = useState(false);
     const [userGroups, setUserGroups] = useState([]);
     const groupsDropdownRef = useRef(null);
@@ -200,23 +195,6 @@ function Header(){
 
             {/* ปุ่มด้านขวา */}
             <div className="button_bar">
-                {isSignedIn && isMainPage && (
-                    <>
-                        <button 
-                            className="create-group-btn"
-                            onClick={() => setShowCreateGroup(true)}
-                        >
-                            Create Group
-                        </button>
-                        <button 
-                            className="join-group-btn"
-                            onClick={() => setShowJoinGroup(true)}
-                        >
-                            Join Group
-                        </button>
-                    </>
-                )}
-                
                 {/* Dropdown สำหรับดู Group Availability - แสดงเฉพาะในหน้า main_page */}
                 {isSignedIn && isMainPage && (
                     <div className="groups-dropdown-container" ref={groupsDropdownRef}>
