@@ -38,8 +38,6 @@ function GroupAvailability() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const data = await response.json();
-      console.log('API Response:', data);
-      console.log('Availabilities:', data.availabilities);
       setGroupInfo(data.group);
       setGroupAvailability(data.availabilities || []);
       setLoading(false);
@@ -61,14 +59,12 @@ function GroupAvailability() {
   };
 
   const formatTime = (dateString) => {
-    console.log('Input dateString:', dateString);
     const date = new Date(dateString);
-    console.log('Parsed date:', date);
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    const formattedTime = `${hours}:${minutes}`;
-    console.log('Formatted time:', formattedTime);
-    return formattedTime;
+    return date.toLocaleTimeString('th-TH', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
   };
 
   const groupByDate = (availabilities) => {
@@ -98,16 +94,15 @@ function GroupAvailability() {
   return (
     <div className="group-availability-container">
       <div className="availability-header">
-        <div className="header-top">
-          <button onClick={() => navigate(-1)} className="back-button">←</button>
-          <h1>{groupInfo ? groupInfo.group_name : 'Loading...'}</h1>
-        </div>
+        <button onClick={() => navigate(-1)} className="back-button">
+          ← Back
+        </button>
+        <h1>Group Availability</h1>
         {groupInfo && (
           <div className="group-info">
-            <div className="group-details">
-              <span>Max Members: {groupInfo.max_members}</span>
-              <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</span>
-            </div>
+            <h2>{groupInfo.group_name}</h2>
+            <p>Max Members: {groupInfo.max_members}</p>
+            <p>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</p>
           </div>
         )}
       </div>
@@ -130,14 +125,9 @@ function GroupAvailability() {
                     {availabilities.map((avail, index) => (
                       <div key={index} className="member-card">
                         <div className="member-info">
-                          <img 
-                            src={'/default-avatar.png'} 
-                            alt={avail.user.name}
-                            className="member-avatar"
-                            onError={(e) => {
-                              e.target.src = 'https://via.placeholder.com/60?text=' + avail.user.name.charAt(0);
-                            }}
-                          />
+                          <div className="member-avatar">
+                            {avail.user.name.charAt(0).toUpperCase()}
+                          </div>
                           <div className="member-details">
                             <h4>{avail.user.name}</h4>
                             <p className="member-email">{avail.user.email}</p>

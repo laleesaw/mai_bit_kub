@@ -47,6 +47,7 @@ export default async function handler(req, res) {
         if (!user_id || !group_id || !start_datetime || !end_datetime) {
           return res.status(400).json({ message: "Missing required fields" });
         }
+        // สร้าง availability
         const newAvail = await prisma.availability.create({
           data: {
             user_id,
@@ -54,8 +55,37 @@ export default async function handler(req, res) {
             start_datetime: new Date(start_datetime),
             end_datetime: new Date(end_datetime),
             note
+          },
+          include: {
+            user: true,
+            group: {
+              include: {
+                groupmember: {
+                  include: {
+                    user: true
+                  }
+                }
+              }
+            }
           }
         });
+
+        // สร้างการแจ้งเตือนให้กับสมาชิกในกลุ่ม
+        const notifications = await Promise.all(
+          newAvail.group.groupmember
+            .filter(member => member.user_id !== user_id) // ไม่ส่งการแจ้งเตือนถึงตัวเอง
+            .map(member =>
+              prisma.notification.create({
+                data: {
+                  user_id: member.user_id,
+                  group_id,
+                  message: `${newAvail.user.name} ได้กรอก availability ในกลุ่ม ${newAvail.group.group_name} แล้ว`,
+                  is_read: false
+                }
+              })
+            )
+        );
+
         return res.status(201).json({
           availability_id: newAvail.availability_id,
           user_id: newAvail.user_id,

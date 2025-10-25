@@ -60,6 +60,7 @@ model group {
   created_at   DateTime       @default(now())
   join_code    String?        @unique
   availability availability[]
+  notification notification[]
   user         user           @relation(fields: [created_by], references: [user_id], map: "Group_created_by_fkey")
   groupmember  groupmember[]
 
@@ -78,6 +79,20 @@ model groupmember {
   @@index([group_id], map: "GroupMember_group_id_fkey")
 }
 
+model notification {
+  notification_id Int      @id @default(autoincrement())
+  user_id        Int      
+  group_id       Int      
+  message        String   
+  is_read        Boolean  @default(false)
+  created_at     DateTime @default(now())
+  user           user     @relation(fields: [user_id], references: [user_id], map: "Notification_user_id_fkey")
+  group          group    @relation(fields: [group_id], references: [group_id], map: "Notification_group_id_fkey")
+
+  @@index([user_id], map: "Notification_user_id_fkey")
+  @@index([group_id], map: "Notification_group_id_fkey")
+}
+
 model user {
   user_id                               Int            @id @default(autoincrement())
   email                                 String         @unique(map: "User_email_key")
@@ -89,6 +104,7 @@ model user {
   budget                                budget[]
   friendship_friendship_friend_idTouser friendship[]   @relation("friendship_friend_idTouser")
   friendship_friendship_user_idTouser   friendship[]   @relation("friendship_user_idTouser")
+  notification                          notification[]
   group                                 group[]
   groupmember                           groupmember[]
   useractivity                          useractivity[]

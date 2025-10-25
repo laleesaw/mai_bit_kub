@@ -12,5 +12,9 @@ export default defineConfig({
         secure: false
       }
     }
+  },
+  // ปิด DevTools notification
+  devTools: {
+    enabled: false
   }
 })

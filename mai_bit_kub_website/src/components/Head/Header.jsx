@@ -12,11 +12,12 @@ import notice_second from '../../assets/notice_second.png'
 import profile_first from '../../assets/profile_first.png'
 import profile_second from '../../assets/profile_second.png'
 
-function button(first, second){
+function button(first, second, unreadCount = 0){
     return(
         <div className="button">
             <img id="first" src={first} alt="" />
             <img id="second" src={second} alt="" />
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
         </div>
     );
 }
@@ -39,6 +40,33 @@ function Header(){
     const [showGroupsDropdown, setShowGroupsDropdown] = useState(false);
     const [userGroups, setUserGroups] = useState([]);
     const groupsDropdownRef = useRef(null);
+    const [notifications, setNotifications] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // ดึงข้อมูลการแจ้งเตือน
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/notifications?userId=${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setNotifications(data);
+                    setUnreadCount(data.filter(n => !n.is_read).length);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+        const interval = setInterval(fetchNotifications, 30000); // Check every 30 seconds
+
+        return () => clearInterval(interval);
+    }, []);
 
     // ดึงข้อมูลกลุ่มของ user
     useEffect(() => {
@@ -69,6 +97,31 @@ function Header(){
             window.removeEventListener('groupCreated', handleGroupUpdate);
         };
     }, [isSignedIn]);
+
+    // Handle read notification
+    const handleNotificationClick = async (notificationId) => {
+        try {
+            await fetch(`http://localhost:3000/api/notifications`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ notificationId })
+            });
+            
+            // Update local state
+            setNotifications(prevNotifications => 
+                prevNotifications.map(n => 
+                    n.notification_id === notificationId 
+                        ? { ...n, is_read: true }
+                        : n
+                )
+            );
+            setUnreadCount(prev => Math.max(0, prev - 1));
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    };
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -213,7 +266,29 @@ function Header(){
                 >
                     {button(home_first, home_second)}
                 </div>
-                <div className="notice_button">{button(notice_first, notice_second)}</div>
+                <div className="notice_button" onClick={() => setShowNotifications(!showNotifications)}>
+                    {button(notice_first, notice_second, unreadCount)}
+                    {showNotifications && (
+                        <div className="notifications-dropdown">
+                            {notifications.length === 0 ? (
+                                <div className="notification-item">ไม่มีการแจ้งเตือน</div>
+                            ) : (
+                                notifications.map((notification) => (
+                                    <div
+                                        key={notification.notification_id}
+                                        className={`notification-item ${!notification.is_read ? 'unread' : ''}`}
+                                        onClick={() => handleNotificationClick(notification.notification_id)}
+                                    >
+                                        <div>{notification.message}</div>
+                                        <div className="time">
+                                            {new Date(notification.created_at).toLocaleString('th-TH')}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 {/* ปุ่มโปรไฟล์ */}
                 {isSignedIn && (
