@@ -191,20 +191,18 @@ function Available() {
         const [startTime, endTime] = time.split(' - ');
         const [startHour] = startTime.split(':').map(Number);
         
-        // แปลงวันที่เป็น UTC
+        // แปลงวันที่และเวลา
         const [year, month, day] = date.split('-').map(Number);
-        
-        // สร้าง Date object ด้วย UTC time
-        const startDate = new Date(Date.UTC(year, month - 1, day, startHour, 0, 0));
+        const startDate = new Date(year, month - 1, day, startHour, 0, 0);
         
         // สร้าง Date object สำหรับเวลาสิ้นสุด
         let endDate;
         if (endTime === "00:00") {
           // กรณีเที่ยงคืน ให้เป็นวันถัดไป
-          endDate = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
+          endDate = new Date(year, month - 1, day + 1, 0, 0, 0);
         } else {
           const [endHour] = endTime.split(':').map(Number);
-          endDate = new Date(Date.UTC(year, month - 1, day, endHour, 0, 0));
+          endDate = new Date(year, month - 1, day, endHour, 0, 0);
         }
 
         // แปลงเวลากลับเป็นเวลาท้องถิ่นสำหรับ note
@@ -260,11 +258,9 @@ function Available() {
       );
 
       if (isOverlap) {
-        const localTime = new Date(availability.start_datetime).toLocaleTimeString('th-TH', { 
-          hour: '2-digit', 
-          minute: '2-digit',
-          hour12: false 
-        });
+        const date = new Date(availability.start_datetime);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const localTime = `${hours}:00`;
         overlappingTimes.add(localTime);
       }
     }

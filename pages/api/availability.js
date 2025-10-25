@@ -47,13 +47,35 @@ export default async function handler(req, res) {
         if (!user_id || !group_id || !start_datetime || !end_datetime) {
           return res.status(400).json({ message: "Missing required fields" });
         }
+
+        // Convert local time to UTC for storage
+        const startDate = new Date(start_datetime);
+        const endDate = new Date(end_datetime);
+        
+        // Ensure we're storing in UTC
+        const startUTC = new Date(Date.UTC(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate(),
+          startDate.getHours(),
+          startDate.getMinutes()
+        ));
+        
+        const endUTC = new Date(Date.UTC(
+          endDate.getFullYear(),
+          endDate.getMonth(),
+          endDate.getDate(),
+          endDate.getHours(),
+          endDate.getMinutes()
+        ));
+
         // สร้าง availability
         const newAvail = await prisma.availability.create({
           data: {
             user_id,
             group_id,
-            start_datetime: new Date(start_datetime),
-            end_datetime: new Date(end_datetime),
+            start_datetime: startUTC,
+            end_datetime: endUTC,
             note
           },
           include: {

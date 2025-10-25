@@ -51,9 +51,16 @@ export default async function handler(req, res) {
         }
       });
 
+      // Convert dates to ISO strings before sending
+      const serializedAvailabilities = availabilities.map(a => ({
+        ...a,
+        start_datetime: a.start_datetime.toISOString(),
+        end_datetime: a.end_datetime.toISOString()
+      }));
+
       return res.status(200).json({
         group,
-        availabilities
+        availabilities: serializedAvailabilities
       });
     } catch (error) {
       console.error("Error fetching group availability:", error);

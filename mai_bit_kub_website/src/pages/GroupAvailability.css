@@ -7,48 +7,66 @@
 }
 
 .availability-header {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 1rem;
   border-radius: 8px;
-  margin-bottom: 0.8rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
   position: relative;
 }
 
 .back-button {
-  background: #667eea;
-  color: white;
+  position: absolute;
+  left: 1rem;
+  background: transparent;
+  color: #4a5568;
   border: none;
-  padding: 0.35rem 0.8rem;
-  border-radius: 5px;
-  font-size: 0.75rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 0.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent; /* ป้องกันไฮไลท์บนมือถือ */
+  outline: none; /* ลบเส้น outline */
+  user-select: none; /* ป้องกันการเลือกข้อความ */
 }
 
-.back-button:hover {
-  background: #5568d3;
-  transform: translateX(-3px);
+.back-button:hover, 
+.back-button:active,
+.back-button:focus {
+  color: #2d3748;
+  background: transparent;
+  outline: none;
+  border-radius: 0;
 }
 
 .availability-header h1 {
-  font-size: 1.1rem;
+  flex: 1;
+  font-size: 1.2rem;
   color: #2d3748;
-  margin-bottom: 0.4rem;
-  text-align: center;
+  margin: 0;
   font-weight: 600;
-}
-
-.group-info {
   text-align: center;
-  margin-top: 0.4rem;
 }
 
-.group-info h2 {
-  font-size: 0.95rem;
-  color: #667eea;
-  margin-bottom: 0.2rem;
+.group-details-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.group-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.group-details-row span {
+  color: #4a5568;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
@@ -141,13 +159,13 @@
   border-radius: 50%;
   border: 2px solid #667eea;
   flex-shrink: 0;
-  background-color: #667eea;
-  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  font-weight: 600;
+  background-color: #667eea;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .member-details {

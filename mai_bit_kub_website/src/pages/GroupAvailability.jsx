@@ -59,12 +59,10 @@ function GroupAvailability() {
   };
 
   const formatTime = (dateString) => {
+    // สร้าง Date object จาก ISO string และใช้เวลาท้องถิ่น
     const date = new Date(dateString);
-    return date.toLocaleTimeString('th-TH', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
+    const localTime = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+    return `${String(localTime.getHours()).padStart(2, '0')}:00`;
   };
 
   const groupByDate = (availabilities) => {
@@ -95,17 +93,19 @@ function GroupAvailability() {
     <div className="group-availability-container">
       <div className="availability-header">
         <button onClick={() => navigate(-1)} className="back-button">
-          ← Back
+          ←
         </button>
-        <h1>Group Availability</h1>
-        {groupInfo && (
-          <div className="group-info">
-            <h2>{groupInfo.group_name}</h2>
-            <p>Max Members: {groupInfo.max_members}</p>
-            <p>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</p>
-          </div>
-        )}
+        <h1>Group</h1>
       </div>
+      
+      {groupInfo && (
+        <div className="group-details-container">
+          <div className="group-details-row">
+            <span>Max Members: {groupInfo.max_members}</span>
+            <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</span>
+          </div>
+        </div>
+      )}
 
       <div className="availability-content">
         {Object.keys(groupedData).length === 0 ? (
@@ -191,6 +191,7 @@ function findCommonTimes(availabilities) {
       const avail1 = availabilities[i];
       const avail2 = availabilities[j];
       
+      // Parse dates in local time
       const start1 = new Date(avail1.start_datetime);
       const end1 = new Date(avail1.end_datetime);
       const start2 = new Date(avail2.start_datetime);
