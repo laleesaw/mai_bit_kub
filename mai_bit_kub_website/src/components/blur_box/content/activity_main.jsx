@@ -74,7 +74,7 @@ const mainActivities = [
 function Activity() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
-  // เพิ่มกิจกรรมให้ user โดยคลิกที่ subActivity
+  // เพิ่มกิจกรรมให้ user โดยคลิกที่ subActivity (toggle behavior)
   async function addUserActivity(activityName) {
     try {
       // 1️⃣ ดึง activity_id จากชื่อกิจกรรม
@@ -87,18 +87,32 @@ function Activity() {
         return;
       }
 
-      // 2️⃣ เพิ่ม userActivity
+      // 2️⃣ Toggle userActivity: create, or if exists (409) delete
+      const userId = parseInt(localStorage.getItem('userId') || '1', 10);
+
       const resUA = await fetch("http://localhost:3000/api/activity/useractivity", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: 1, // เปลี่ยนเป็น user_id จริง
+          user_id: userId,
           activity_id: activity.activity_id,
           preference_level: 1,
         }),
       });
+
+      // If it already exists, toggle: delete the userActivity
       if (resUA.status === 409) {
-        console.warn('UserActivity already exists for this user/activity');
+        console.warn('UserActivity already exists for this user/activity — attempting to remove (toggle)');
+        const resDel = await fetch("http://localhost:3000/api/activity/useractivity", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, activity_id: activity.activity_id }),
+        });
+
+        if (!resDel.ok) {
+          throw new Error(`Failed to remove activity: ${resDel.status}`);
+        }
+        console.log('✅ Removed activity (toggled off)');
         return;
       }
 
@@ -136,7 +150,7 @@ function Activity() {
               <div
                 key={idx}
                 className="sub_card"
-                onClick={() => addUserActivity(sub.name)} // คลิกเพื่อเพิ่ม activity
+                onClick={() => addUserActivity(sub.name)}
                 style={{ cursor: "pointer" }}
               >
                 <img src={sub.icon} alt={sub.name} />
