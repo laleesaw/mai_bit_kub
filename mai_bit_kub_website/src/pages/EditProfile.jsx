@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './EditProfile.css';
+import defaultProfileImage from '../assets/profile_icon_main.png';
 
 function EditProfile() {
     const navigate = useNavigate();
     const [initialData, setInitialData] = useState({
         name: '',
-        email: ''
+        email: '',
+        profile_image: ''
     });
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         currentPassword: '',
         newPassword: '',
-        confirmNewPassword: ''
+        confirmNewPassword: '',
+        profile_image: ''
     });
+    const [previewImage, setPreviewImage] = useState(null);
 
     useEffect(() => {
         // Get user data when component mounts
@@ -46,13 +50,17 @@ function EditProfile() {
                 console.log('Received user data:', userData);
                 const initialValues = {
                     name: userData.name || '',
-                    email: userData.email || ''
+                    email: userData.email || '',
+                    profile_image: userData.profile_image || ''
                 };
                 setInitialData(initialValues);
                 setFormData(prevState => ({
                     ...prevState,
                     ...initialValues
                 }));
+                if (userData.profile_image) {
+                    setPreviewImage(userData.profile_image);
+                }
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 toast.error('Failed to load user data');
@@ -61,6 +69,27 @@ function EditProfile() {
 
         fetchUserData();
     }, [navigate]);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('Image size should be less than 5MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                setPreviewImage(base64String);
+                setFormData(prevState => ({
+                    ...prevState,
+                    profile_image: base64String
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -85,6 +114,12 @@ function EditProfile() {
         // Check if email has changed
         if (formData.email !== initialData.email) {
             updateData.email = formData.email;
+            hasChanges = true;
+        }
+
+        // Check if profile image has changed
+        if (formData.profile_image !== initialData.profile_image) {
+            updateData.profile_image = formData.profile_image;
             hasChanges = true;
         }
 
@@ -122,6 +157,8 @@ function EditProfile() {
             if (!response.ok) throw new Error('Failed to update profile');
 
             toast.success('Profile updated successfully');
+            // Dispatch event to update header
+            window.dispatchEvent(new Event('profileUpdated'));
             navigate('/main_page');
         } catch (error) {
             console.error('Error updating profile:', error);
@@ -130,9 +167,34 @@ function EditProfile() {
     };
 
     return (
-        <div className="edit-profile-container">
-            <h2 className="edit-profile-title">Edit Profile</h2>
-            <form onSubmit={handleSubmit} className="edit-profile-form">
+        <div style={{ paddingBottom: '20px' }}>
+            <div className="edit-profile-container">
+                <h2 className="edit-profile-title">Edit Profile</h2>
+                <form onSubmit={handleSubmit} className="edit-profile-form">
+                <div className="form-input-group profile-image-section">
+                    <label>Profile Picture</label>
+                    <div className="profile-image-upload">
+                        <div className="profile-image-preview">
+                            {previewImage ? (
+                                <img src={previewImage} alt="Profile Preview" />
+                            ) : (
+                                <img src={defaultProfileImage} alt="Default Profile" />
+                            )}
+                        </div>
+                        <input
+                            type="file"
+                            id="profile_image"
+                            name="profile_image"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
+                        />
+                        <label htmlFor="profile_image" className="upload-button">
+                            Choose Image
+                        </label>
+                    </div>
+                </div>
+
                 <div className="form-input-group">
                     <label htmlFor="name">Name</label>
                     <input
@@ -192,6 +254,9 @@ function EditProfile() {
                 </div>
 
                 <div className="edit-profile-buttons">
+                    <button type="submit" className="save-button">
+                        Save Changes
+                    </button>
                     <button 
                         type="button" 
                         className="cancel-button"
@@ -199,11 +264,9 @@ function EditProfile() {
                     >
                         Cancel
                     </button>
-                    <button type="submit" className="save-button">
-                        Save Changes
-                    </button>
                 </div>
             </form>
+            </div>
         </div>
     );
 }

@@ -6,6 +6,7 @@ function serializeUser(user) {
     user_id: user.user_id,
     email: user.email,
     name: user.name,
+    profile_image: user.profile_image,
     created_at: user.created_at?.toISOString()
   };
 }
@@ -39,12 +40,13 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PUT') {
-      const { name, email, current_password, new_password } = req.body;
+      const { name, email, current_password, new_password, profile_image } = req.body;
       const updateData = {};
 
       // Only include fields that were provided
       if (name) updateData.name = name;
       if (email) updateData.email = email;
+      if (profile_image !== undefined) updateData.profile_image = profile_image;
       
       // Handle password update separately if needed
       if (new_password && current_password) {

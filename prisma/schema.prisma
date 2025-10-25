@@ -58,6 +58,7 @@ model group {
   max_members  Int
   created_by   Int
   created_at   DateTime       @default(now())
+  join_code    String?        @unique
   availability availability[]
   user         user           @relation(fields: [created_by], references: [user_id], map: "Group_created_by_fkey")
   groupmember  groupmember[]
@@ -82,6 +83,7 @@ model user {
   email                                 String         @unique(map: "User_email_key")
   password                              String
   name                                  String
+  profile_image                         String?        @db.LongText
   created_at                            DateTime       @default(now())
   availability                          availability[]
   budget                                budget[]

@@ -70,6 +70,8 @@ export default async function handler(req, res) {
                     id: group.group_id,
                     group_name: group.group_name,
                     max_members: group.max_members,
+                    // Only add +1 if creator is not in members list
+                    current_members: group.groupmember.length + (creatorInMembers ? 0 : 1),
                     created_by: group.created_by,
                     created_at: group.created_at,
                     join_code: group.join_code,

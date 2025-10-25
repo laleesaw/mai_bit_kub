@@ -19,6 +19,9 @@
     padding: 10px;
     justify-content: flex-start; /* ให้เริ่มจากซ้าย */
     flex-wrap: nowrap; /* ให้เป็นบรรทัดเดียว */
+    height: 100%;
+    /* background-color: aqua; */
+    align-items: center;
 }
 
 .activity_card {

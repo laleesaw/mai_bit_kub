@@ -32,6 +32,7 @@ function Friend(){
                 const membersWithDetails = members.map((member) => ({
                     user_id: member.user_id,
                     username: member.user?.name || 'Unknown User',
+                    profile_image: member.user?.profile_image || null,
                     role: member.role
                 }));
                 
@@ -58,7 +59,15 @@ function Friend(){
             <div className="members-container">
                 {groupMembers.map((member) => (
                     <div key={member.user_id} className="member-item">
-                        <img src={Profile_friend} alt={member.username} />
+                        {member.profile_image ? (
+                            <img 
+                                src={member.profile_image} 
+                                alt={member.username} 
+                                className="member-profile-image"
+                            />
+                        ) : (
+                            <img src={Profile_friend} alt={member.username} />
+                        )}
                         <span className="member-name">{member.username}</span>
                     </div>
                 ))}

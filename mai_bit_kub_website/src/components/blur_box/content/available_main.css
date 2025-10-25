@@ -64,11 +64,8 @@
   color: white;
   cursor: pointer;
   margin: 6px 0;
-  transition: 0.2s;
-}
-
-.arrow-btn:hover {
-  color: #ffb3bb;
+  /* transition: 0.2s; */
+  width: 100%;
 }
 
 /* ชื่อเดือน */
@@ -90,7 +87,7 @@
 }
 
 .group-selector-header {
-  color: #ff647c;
+  color: white;
   font-size: 1.1rem;
   margin-bottom: 0.8rem;
   font-weight: bold;

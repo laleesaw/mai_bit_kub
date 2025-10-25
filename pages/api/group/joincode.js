@@ -36,14 +36,14 @@ export default async function handler(req, res) {
         // Check if user is the group creator or admin
         const group = await prisma.group.findUnique({
           where: { group_id: parseInt(group_id) },
-          include: { members: true }
+          include: { groupmember: true }
         });
 
         if (!group) {
           return res.status(404).json({ message: "Group not found" });
         }
 
-        const member = group.members.find(m => m.user_id === parseInt(user_id));
+        const member = group.groupmember.find(m => m.user_id === parseInt(user_id));
         if (group.created_by !== parseInt(user_id) && (!member || member.role !== 'admin')) {
           return res.status(403).json({ message: "Only group creator or admin can generate join code" });
         }
@@ -102,7 +102,7 @@ export default async function handler(req, res) {
         // Find group by join code
         const group = await prisma.group.findFirst({
           where: { join_code: join_code.toUpperCase() },
-          include: { members: true }
+          include: { groupmember: true }
         });
 
         if (!group) {
@@ -110,18 +110,18 @@ export default async function handler(req, res) {
         }
 
         // Check if user is already a member
-        const existingMember = group.members.find(m => m.user_id === parseInt(user_id));
+        const existingMember = group.groupmember.find(m => m.user_id === parseInt(user_id));
         if (existingMember) {
           return res.status(400).json({ message: "You are already a member of this group" });
         }
 
         // Check if group is full
-        if (group.members.length >= group.max_members) {
+        if (group.groupmember.length >= group.max_members) {
           return res.status(400).json({ message: "Group is full" });
         }
 
         // Add user to group
-        await prisma.groupMember.create({
+        await prisma.groupmember.create({
           data: {
             user_id: parseInt(user_id),
             group_id: group.group_id,

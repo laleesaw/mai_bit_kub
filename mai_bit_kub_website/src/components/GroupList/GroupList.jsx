@@ -9,6 +9,12 @@ function GroupList() {
     const [showCodeModal, setShowCodeModal] = useState(false);
     const [currentGroupCode, setCurrentGroupCode] = useState('');
     const [currentGroupId, setCurrentGroupId] = useState(null);
+    const [showFabMenu, setShowFabMenu] = useState(false);
+    const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const [showJoinGroup, setShowJoinGroup] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+    const [maxMembers, setMaxMembers] = useState(10);
+    const [joinCode, setJoinCode] = useState('');
 
     const fetchGroups = async () => {
         if (!userId) {
@@ -102,6 +108,73 @@ function GroupList() {
         toast.success('Join code copied to clipboard!');
     };
 
+    const handleCreateGroup = async (e) => {
+        e.preventDefault();
+        try {
+            if (!userId) {
+                toast.error('Please login first');
+                return;
+            }
+
+            const res = await fetch('http://localhost:3000/api/group', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    group_name: newGroupName,
+                    max_members: parseInt(maxMembers),
+                    created_by: parseInt(userId)
+                })
+            });
+
+            if (!res.ok) throw new Error('Failed to create group');
+
+            toast.success('Group created successfully!');
+            fetchGroups();
+            setNewGroupName('');
+            setMaxMembers(10);
+            setShowCreateGroup(false);
+            setShowFabMenu(false);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to create group');
+        }
+    };
+
+    const handleJoinGroup = async (e) => {
+        e.preventDefault();
+        try {
+            if (!userId) {
+                toast.error('Please login first');
+                return;
+            }
+
+            const res = await fetch('http://localhost:3000/api/group/joincode', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    join_code: joinCode.toUpperCase(),
+                    user_id: parseInt(userId)
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                toast.error(data.message || 'Failed to join group');
+                return;
+            }
+
+            toast.success(`Successfully joined ${data.group_name}!`);
+            fetchGroups();
+            setJoinCode('');
+            setShowJoinGroup(false);
+            setShowFabMenu(false);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to join group');
+        }
+    };
+
     useEffect(() => {
         if (userId) {
             fetchGroups();
@@ -146,7 +219,104 @@ function GroupList() {
                         </div>
                     )}
                 </div>
+
+                {/* Floating Action Button */}
+                <button 
+                    className="fab-button"
+                    onClick={() => setShowFabMenu(!showFabMenu)}
+                >+</button>
+
+                {/* FAB Menu */}
+                {showFabMenu && (
+                    <div className="fab-menu">
+                        <button 
+                            className="fab-menu-item create"
+                            onClick={() => {
+                                setShowCreateGroup(true);
+                                setShowFabMenu(false);
+                            }}
+                        >
+                            Create Group
+                        </button>
+                        <button 
+                            className="fab-menu-item join"
+                            onClick={() => {
+                                setShowJoinGroup(true);
+                                setShowFabMenu(false);
+                            }}
+                        >
+                            Join Group
+                        </button>
+                    </div>
+                )}
             </div>
+
+            {/* Modal Create Group */}
+            {showCreateGroup && ReactDOM.createPortal(
+                <div className="modal-overlay" onClick={() => setShowCreateGroup(false)}>
+                    <div className="modal-content create-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>Create New Group</h2>
+                        <form onSubmit={handleCreateGroup}>
+                            <div className="form-group">
+                                <label>Group Name:</label>
+                                <input
+                                    type="text"
+                                    value={newGroupName}
+                                    onChange={(e) => setNewGroupName(e.target.value)}
+                                    placeholder="Enter group name"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Max Members:</label>
+                                <input
+                                    type="number"
+                                    value={maxMembers}
+                                    onChange={(e) => setMaxMembers(e.target.value)}
+                                    min="2"
+                                    max="50"
+                                />
+                            </div>
+                            <div className="modal-buttons">
+                                <button type="submit">Create</button>
+                                <button type="button" onClick={() => setShowCreateGroup(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Modal Join Group */}
+            {showJoinGroup && ReactDOM.createPortal(
+                <div className="modal-overlay" onClick={() => setShowJoinGroup(false)}>
+                    <div className="modal-content join-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>Join Group</h2>
+                        <form onSubmit={handleJoinGroup}>
+                            <div className="form-group">
+                                <label>Join Code:</label>
+                                <input
+                                    type="text"
+                                    value={joinCode}
+                                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                                    placeholder="Enter 8-character code"
+                                    maxLength="8"
+                                    required
+                                    style={{ textTransform: 'uppercase' }}
+                                />
+                            </div>
+                            <div className="modal-buttons">
+                                <button type="submit">Join</button>
+                                <button type="button" onClick={() => {
+                                    setShowJoinGroup(false);
+                                    setJoinCode('');
+                                }}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>,
+                document.body
+            )}
 
             {/* Modal แสดงรหัส - ใช้ Portal เพื่อแสดงนอก container */}
             {showCodeModal && ReactDOM.createPortal(
