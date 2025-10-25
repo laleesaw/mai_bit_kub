@@ -154,7 +154,7 @@ function GroupAvailability() {
 
                   {/* แสดงเวลาที่ตรงกันทั้งหมด */}
                   <div className="common-times">
-                    <h4>Common Available Times</h4>
+                    <h4>เวลาที่ตรงกัน</h4>
                     {findCommonTimes(availabilities).length > 0 ? (
                       <div className="common-times-list">
                         {findCommonTimes(availabilities).map((time, idx) => (
