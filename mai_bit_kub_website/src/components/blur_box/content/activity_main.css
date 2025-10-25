@@ -95,6 +95,12 @@
     /* box-shadow: 0 6px 18px rgba(30,136,255,0.18); */
 }
 
+/* disabled state when user's budget can't cover activity */
+.sub_card.disabled img {
+    filter: grayscale(1);
+    opacity: 0.6;
+}
+
 .sub_name {
     margin-top: 5px;
     font-size: 14px;

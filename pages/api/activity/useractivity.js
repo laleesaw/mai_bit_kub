@@ -11,7 +11,12 @@ function serializeUserActivity(ua) {
       ? { user_id: ua.user.user_id, name: ua.user.name, email: ua.user.email }
       : null,
     activity: ua.activity
-      ? { activity_id: ua.activity.activity_id, name: ua.activity.name }
+      ? {
+          activity_id: ua.activity.activity_id,
+          name: ua.activity.activity_name,
+          min_cost: ua.activity.min_cost != null ? Number(ua.activity.min_cost) : null,
+          max_cost: ua.activity.max_cost != null ? Number(ua.activity.max_cost) : null,
+        }
       : null,
   };
 }
