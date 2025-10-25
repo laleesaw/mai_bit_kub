@@ -40,22 +40,31 @@ export default async function handler(req, res) {
             // Format the response
             const formattedGroups = groups.map(group => {
                 // Check if creator is already in members list
-                const creatorInMembers = group.groupmember.some(member => member.user_id === group.created_by);
-                
-                const members = [
-                    {
-                        user_id: group.created_by,
-                        name: group.user.name,
-                        email: group.user.email,
-                        role: 'creator'
-                    },
-                    ...group.groupmember.map(member => ({
+                const creatorInMembers = group.groupmember.some(member => 
+                    member.user_id === group.created_by
+                );
+
+                const members = creatorInMembers 
+                    ? group.groupmember.map(member => ({
                         user_id: member.user_id,
                         name: member.user.name,
                         email: member.user.email,
-                        role: member.role || 'member'
+                        role: member.user_id === group.created_by ? 'creator' : (member.role || 'member')
                     }))
-                ];
+                    : [
+                        {
+                            user_id: group.created_by,
+                            name: group.user.name,
+                            email: group.user.email,
+                            role: 'creator'
+                        },
+                        ...group.groupmember.map(member => ({
+                            user_id: member.user_id,
+                            name: member.user.name,
+                            email: member.user.email,
+                            role: member.role || 'member'
+                        }))
+                    ];
                 
                 return {
                     id: group.group_id,
