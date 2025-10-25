@@ -46,11 +46,15 @@ function Header(){
             if (!userId) return;
 
             try {
-                const response = await fetch(`http://localhost:3000/api/notifications?userId=${userId}`);
+                const response = await fetch(`http://localhost:3000/api/notifications?userId=${userId}`, {
+                    credentials: 'include'
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setNotifications(data);
-                    setUnreadCount(data.filter(n => !n.is_read).length);
+                    // อัพเดท unreadCount
+                    const unread = data.filter(n => !n.is_read).length;
+                    setUnreadCount(unread);
                 }
             } catch (error) {
                 console.error('Error fetching notifications:', error);
@@ -96,12 +100,14 @@ function Header(){
     // Handle read notification
     const handleNotificationClick = async (notificationId) => {
         try {
-            await fetch(`http://localhost:3000/api/notifications`, {
+            const response = await fetch(`http://localhost:3000/api/notifications`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({ notificationId })
+                credentials: 'include',
+                body: JSON.stringify({ notification_id: notificationId })
             });
             
             // Update local state
@@ -248,6 +254,33 @@ function Header(){
                     {button(notice_first, notice_second, unreadCount)}
                     {showNotifications && (
                         <div className="notifications-dropdown">
+                            <div className="notifications-header">
+                                <span>การแจ้งเตือน</span>
+                                {notifications.some(n => n.is_read) && (
+                                    <button 
+                                        className="clear-notifications-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            const userId = localStorage.getItem('userId');
+                                            fetch(
+                                                `http://localhost:3000/api/notifications?userId=${userId}`,
+                                                {
+                                                    method: 'DELETE',
+                                                    credentials: 'include'
+                                                }
+                                            ).then(response => {
+                                                if (response.ok) {
+                                                    setNotifications(prev => prev.filter(n => !n.is_read));
+                                                }
+                                            }).catch(error => {
+                                                console.error('Error clearing notifications:', error);
+                                            });
+                                        }}
+                                    >
+                                        ล้างที่อ่านแล้ว
+                                    </button>
+                                )}
+                            </div>
                             {notifications.length === 0 ? (
                                 <div className="notification-item">ไม่มีการแจ้งเตือน</div>
                             ) : (
