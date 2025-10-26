@@ -1,6 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+// Configure body parser size limit
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 function serializeUser(user) {
   return {
     user_id: user.user_id,
