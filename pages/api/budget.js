@@ -128,6 +128,7 @@ export default async function handler(req, res) {
         const serialized = budgets.map(b => ({
           budget_id: b.budget_id,
           user_id: b.user_id,
+          min_budget: Number(b.min_budget),
           max_budget: Number(b.max_budget),
           user: b.user ? { user_id: b.user.user_id, email: b.user.email, name: b.user.name } : null
         }));

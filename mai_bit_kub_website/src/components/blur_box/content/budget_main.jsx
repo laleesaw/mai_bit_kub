@@ -24,26 +24,54 @@ function Budget() {
     async function loadBudget() {
       try {
         const id = localStorage.getItem("userId");
-        if (!id) return;
-        const res = await fetch(`/api/budget`);
-        if (!res.ok) return;
+        if (!id) {
+          console.log('No userId in localStorage');
+          return;
+        }
+        
+        console.log('Loading budget for userId:', id);
+        const res = await fetch(`http://localhost:3000/api/budget`);
+        if (!res.ok) {
+          console.log('Failed to fetch budget, status:', res.status);
+          return;
+        }
+        
         const all = await res.json();
+        console.log('All budgets:', all);
+        
         const mine = all.find(b => String(b.user_id) === String(id));
+        console.log('My budget:', mine);
+        
         if (mine) {
           setBudgetId(mine.budget_id || null);
-          setMinBudget(String(mine.min_budget ?? ""));
-          setMaxBudget(String(mine.max_budget ?? ""));
+          // แสดงค่า min_budget และ max_budget แม้จะเป็น null
+          const minVal = mine.min_budget !== null && mine.min_budget !== undefined ? String(mine.min_budget) : "";
+          const maxVal = mine.max_budget !== null && mine.max_budget !== undefined ? String(mine.max_budget) : "";
+          
+          console.log('Setting minBudget:', minVal, 'maxBudget:', maxVal);
+          setMinBudget(minVal);
+          setMaxBudget(maxVal);
           setIsSaved(true);
+          
           // also notify activity about existing saved budget
-          window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: Number(mine.max_budget || 0), minBudget: Number(mine.min_budget || 0) } }));
+          window.dispatchEvent(new CustomEvent('userBudgetUpdated', { 
+            detail: { 
+              maxBudget: Number(mine.max_budget || 0), 
+              minBudget: Number(mine.min_budget || 0) 
+            } 
+          }));
+        } else {
+          console.log('No budget found for this user');
         }
       } catch (err) {
         console.error('Failed to load existing budget', err);
       }
     }
 
-    loadBudget();
-  }, []);
+    if (userId) {
+      loadBudget();
+    }
+  }, [userId]);
 
   // Listen for selected activities min cost to enforce minBudget
   useEffect(() => {
@@ -83,7 +111,7 @@ function Budget() {
     try {
       const method = budgetId ? 'PUT' : 'POST';
       const body = budgetId ? { budget_id: budgetId, min_budget: min, max_budget: max } : { user_id: userId, min_budget: min, max_budget: max };
-      const res = await fetch(`/api/budget`, {
+      const res = await fetch(`http://localhost:3000/api/budget`, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
