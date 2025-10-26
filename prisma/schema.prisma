@@ -63,6 +63,7 @@ model group {
   availability availability[]
   user         user           @relation(fields: [created_by], references: [user_id], map: "Group_created_by_fkey")
   groupmember  groupmember[]
+  notification notification[]
 
   @@index([created_by], map: "Group_created_by_fkey")
 }
@@ -84,14 +85,15 @@ model user {
   email                                 String         @unique(map: "User_email_key")
   password                              String
   name                                  String
-  profile_image                         String?        @db.LongText
   created_at                            DateTime       @default(now())
+  profile_image                         String?        @db.LongText
   availability                          availability[]
   budget                                budget[]
   friendship_friendship_friend_idTouser friendship[]   @relation("friendship_friend_idTouser")
   friendship_friendship_user_idTouser   friendship[]   @relation("friendship_user_idTouser")
   group                                 group[]
   groupmember                           groupmember[]
+  notification                          notification[]
   useractivity                          useractivity[]
 }
 
@@ -104,4 +106,18 @@ model useractivity {
 
   @@id([user_id, activity_id])
   @@index([activity_id], map: "UserActivity_activity_id_fkey")
+}
+
+model notification {
+  notification_id Int      @id @default(autoincrement())
+  user_id         Int
+  group_id        Int
+  message         String
+  is_read         Boolean  @default(false)
+  created_at      DateTime @default(now())
+  group           group    @relation(fields: [group_id], references: [group_id], map: "Notification_group_id_fkey")
+  user            user     @relation(fields: [user_id], references: [user_id], map: "Notification_user_id_fkey")
+
+  @@index([group_id], map: "Notification_group_id_fkey")
+  @@index([user_id], map: "Notification_user_id_fkey")
 }
