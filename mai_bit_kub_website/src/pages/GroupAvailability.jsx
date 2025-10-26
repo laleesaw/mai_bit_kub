@@ -9,6 +9,18 @@ function GroupAvailability() {
   const [groupAvailability, setGroupAvailability] = useState([]);
   const [loading, setLoading] = useState(true);
   const [groupInfo, setGroupInfo] = useState(null);
+  const [recommendedActivities, setRecommendedActivities] = useState([]);
+  const [showActivityModal, setShowActivityModal] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Get user ID from localStorage
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      setCurrentUser({ user_id: parseInt(userId) });
+    }
+  }, []);
 
   // รับ groupId จาก state ที่ส่งมา
   const groupId = location.state?.groupId;
@@ -22,6 +34,8 @@ function GroupAvailability() {
 
     fetchGroupAvailability();
   }, [groupId]);
+
+
 
   const fetchGroupAvailability = async () => {
     try {
@@ -77,6 +91,37 @@ function GroupAvailability() {
     });
 
     return grouped;
+  };
+
+  const handleScheduleActivity = async (timeSlot) => {
+    try {
+      console.log('Opening modal for time slot:', timeSlot);
+      setSelectedTimeSlot(timeSlot);
+      const response = await fetch(`http://localhost:3000/api/recommend-activities?groupId=${groupId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      console.log('Received activities:', data.recommendedActivities);
+      
+      if (!data.recommendedActivities || data.recommendedActivities.length === 0) {
+        toast.info('ไม่พบกิจกรรมที่แนะนำ กรุณาให้สมาชิกเพิ่มกิจกรรมที่สนใจก่อน');
+        return;
+      }
+
+      setRecommendedActivities(data.recommendedActivities);
+      setShowActivityModal(true);
+    } catch (error) {
+      console.error('Error fetching activity recommendations:', error);
+      toast.error('เกิดข้อผิดพลาดในการโหลดกิจกรรมที่แนะนำ');
+    }
   };
 
   const groupedData = groupByDate(groupAvailability);
@@ -159,10 +204,22 @@ function GroupAvailability() {
                       <div className="common-times-list">
                         {findCommonTimes(availabilities).map((time, idx) => (
                           <div key={idx} className="common-time-slot">
-                            {formatTime(time.start)} - {formatTime(time.end)}
-                            <span className="member-count">
-                              ({time.members.length} members available)
-                            </span>
+                            <div className="time-info">
+                              {formatTime(time.start)} - {formatTime(time.end)}
+                              <span className="member-count">
+                                ({time.members.length} members available)
+                              </span>
+                            </div>
+                            {currentUser && groupInfo && groupInfo.groupmember?.some(member => 
+                              member.user_id === currentUser.user_id && member.role === 'admin'
+                            ) && (
+                              <button 
+                                className="schedule-activity-btn"
+                                onClick={() => handleScheduleActivity(time)}
+                              >
+                                เพิ่มการนัด
+                              </button>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -175,8 +232,70 @@ function GroupAvailability() {
           </div>
         )}
       </div>
+
+      {/* Modal แสดงกิจกรรมที่แนะนำ */}
+      {showActivityModal && (
+        <div className="activity-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>🎯 กิจกรรมที่แนะนำ</h2>
+              <button 
+                className="close-modal-icon"
+                onClick={() => setShowActivityModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="selected-time">
+              <div className="time-icon">🕒</div>
+              <div className="time-details">
+                <p className="time-label">เวลาที่เลือก</p>
+                <p className="time-value">{formatTime(selectedTimeSlot.start)} - {formatTime(selectedTimeSlot.end)}</p>
+                <p className="members-available">สมาชิกว่าง {selectedTimeSlot.members.length} คน</p>
+              </div>
+            </div>
+            <div className="activity-list">
+              {recommendedActivities.map((activity) => (
+                <div key={activity.activity_id} className="activity-item">
+                  <div className="activity-header">
+                    <h3>{activity.activity_name}</h3>
+                    <span className="popularity-badge">
+                      {activity.popularity || 0} คนสนใจ
+                    </span>
+                  </div>
+                  <div className="activity-details">
+                    <div className="detail-row">
+                      <span className="detail-icon">📂</span>
+                      <span className="detail-label">หมวดหมู่:</span>
+                      <span className="detail-value">{activity.category}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-icon">💰</span>
+                      <span className="detail-label">งบประมาณ:</span>
+                      <span className="detail-value">{activity.min_cost.toLocaleString()} - {activity.max_cost.toLocaleString()} บาท</span>
+                    </div>
+                  </div>
+                  <button 
+                    className="select-activity-btn"
+                    onClick={() => {
+                      toast.success(`เลือกกิจกรรม ${activity.activity_name} สำเร็จ`, {
+                        icon: "🎉"
+                      });
+                      setShowActivityModal(false);
+                    }}
+                  >
+                    <span className="btn-icon">✓</span>
+                    เลือกกิจกรรมนี้
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+
 }
 
 // ฟังก์ชันหาเวลาที่ตรงกัน

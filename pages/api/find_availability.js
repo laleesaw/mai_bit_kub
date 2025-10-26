@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: "Group ID is required" });
       }
 
-      // Get group information
+      // Get group information and group members
       const group = await prisma.group.findUnique({
         where: {
           group_id: parseInt(groupId)
@@ -24,7 +24,13 @@ export default async function handler(req, res) {
           group_id: true,
           group_name: true,
           max_members: true,
-          created_at: true
+          created_at: true,
+          groupmember: {
+            select: {
+              user_id: true,
+              role: true
+            }
+          }
         }
       });
 
