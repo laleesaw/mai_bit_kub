@@ -43,7 +43,8 @@ export default async function handler(req, res) {
               select: {
                 user_id: true,
                 name: true,
-                email: true
+                email: true,
+                profile_image: true
               }
             }, 
             group: {

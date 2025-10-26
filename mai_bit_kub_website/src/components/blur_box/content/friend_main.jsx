@@ -1,6 +1,7 @@
 import "./friend_main.css"
 import Profile_friend from "../../../assets/profile_icon_friend.png"
 import Add_friend from "../../../assets/add_friend.png"
+import Default_profile from "../../../assets/profile_icon_main.png"
 import { useState, useEffect } from "react"
 import { toast } from 'react-toastify'
 
@@ -59,15 +60,15 @@ function Friend(){
             <div className="members-container">
                 {groupMembers.map((member) => (
                     <div key={member.user_id} className="member-item">
-                        {member.profile_image ? (
-                            <img 
-                                src={member.profile_image} 
-                                alt={member.username} 
-                                className="member-profile-image"
-                            />
-                        ) : (
-                            <img src={Profile_friend} alt={member.username} />
-                        )}
+                        <img 
+                            src={member.profile_image || Default_profile} 
+                            alt={member.username} 
+                            className="member-profile-image"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = Default_profile;
+                            }}
+                        />
                         <span className="member-name">{member.username}</span>
                     </div>
                 ))}

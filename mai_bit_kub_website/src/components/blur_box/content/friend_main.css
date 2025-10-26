@@ -27,12 +27,12 @@
 .members-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 15px;
     justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 100%;
-    padding-top: 60px;
+    padding-top: 80px;
     box-sizing: border-box;
 }
 
@@ -40,7 +40,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 0px;
 }
 
 .member-item img {
@@ -58,6 +58,26 @@
     object-fit: cover;
     border: 2px solid #EA5B6F;
     transition: transform 0.3s ease;
+}
+
+.member-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EA5B6F, #F76B8A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 2px solid #EA5B6F;
+    transition: transform 0.3s ease;
+}
+
+.member-avatar-placeholder:hover {
+    transform: scale(1.1);
 }
 
 .member-item img:hover,
