@@ -62,7 +62,7 @@
   background: rgba(234, 91, 111, 0.3);
   backdrop-filter: blur(10px);
   color: white;
-  border: 1px solid rgba(234, 91, 111, 0.5);
+  border: none;
   border-radius: 12px;
   font-size: 14px;
   font-weight: bold;
