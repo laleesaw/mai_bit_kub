@@ -316,28 +316,36 @@ function Activity() {
               <img src={Back} alt="Back" />
             </button>
 
-            <div className="sub_activity_icon">
-              {(selectedActivity?.subActivities || []).map((sub, idx) => {
-                const cost = activityCosts[sub.name];
-                const allowByMin = userBudgetMin != null && cost != null && cost < userBudgetMin;
-                const allowByMax = userBudgetMax != null && cost != null && userBudgetMax > cost;
-                const disabled = cost != null && initialBudgetExists && !(allowByMin || allowByMax);
-                // only show selected visual when it's selected AND not disabled by budget
-                const isSelected = userActivities.has(sub.name) && !disabled;
-                return (
-                  <div
-                    key={idx}
-                    className={`sub_card ${isSelected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
-                    onClick={() => { if (!disabled) addUserActivity(sub.name); }}
-                    style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1 }}
-                    title={disabled ? `Does not meet your saved budget constraints (min ${userBudgetMin || '-'}, max ${userBudgetMax || '-'})` : ''}
-                  >
-                    <img src={sub.icon} alt={sub.name} />
-                    <div className="sub_name">{sub.name}</div>
-                  </div>
-                );
-              })}
-            </div>
+<div className="sub_activity_icon">
+  {(selectedActivity?.subActivities || []).map((sub, idx) => {
+    const cost = activityCosts[sub.name];
+    const allowByMin = userBudgetMin != null && cost != null && cost < userBudgetMin;
+    const allowByMax = userBudgetMax != null && cost != null && userBudgetMax > cost;
+    const disabled = cost != null && initialBudgetExists && !(allowByMin || allowByMax);
+    const isSelected = userActivities.has(sub.name) && !disabled;
+
+    return (
+      <div
+        key={idx}
+        className={`sub_card ${isSelected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
+        onClick={() => { if (!disabled) addUserActivity(sub.name); }}
+        style={{
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          opacity: disabled ? 0.5 : 1,
+        }}
+      >
+        <img src={sub.icon} alt={sub.name} />
+        <div className="sub_name">{sub.name}</div>
+
+        {/* ✅ แสดง min cost */}
+        {cost != null && (
+          <div className="sub_cost">Min cost: {cost}฿</div>
+        )}
+      </div>
+    );
+  })}
+</div>
+
             {/* Debug row: show budget and per-subactivity cost/disabled state to troubleshoot why a card is disabled */}
             {/* <div style={{ marginTop: 10, fontSize: 12, color: '#444' }}>
               <div><strong>DEBUG (activity)</strong></div>

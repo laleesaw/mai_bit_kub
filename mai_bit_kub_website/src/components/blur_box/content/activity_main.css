@@ -131,3 +131,18 @@
 
     
 }
+
+.sub_cost {
+  opacity: 0;
+  visibility: hidden;
+  font-size: 13px;
+  color: #FFFBDE;
+  margin-top: 3px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* ✅ แสดงเมื่อ hover ที่ sub_card */
+.sub_card:hover .sub_cost {
+  opacity: 1;
+  visibility: visible;
+}
