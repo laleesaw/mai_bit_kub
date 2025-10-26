@@ -8,12 +8,13 @@ datasource db {
 }
 
 model activity {
-  activity_id   Int            @id @default(autoincrement())
-  activity_name String
-  max_cost      Float
-  min_cost      Float
-  category      String
-  useractivity  useractivity[]
+  activity_id        Int                  @id @default(autoincrement())
+  activity_name      String
+  max_cost           Float
+  min_cost           Float
+  category           String
+  useractivity       useractivity[]
+  scheduled_activity scheduled_activity[]
 }
 
 model availability {
@@ -54,16 +55,17 @@ model friendship {
 }
 
 model group {
-  group_id     Int            @id @default(autoincrement())
-  group_name   String
-  max_members  Int
-  created_by   Int
-  created_at   DateTime       @default(now())
-  join_code    String?        @unique
-  availability availability[]
-  notification notification[]
-  user         user           @relation(fields: [created_by], references: [user_id], map: "Group_created_by_fkey")
-  groupmember  groupmember[]
+  group_id           Int                  @id @default(autoincrement())
+  group_name         String
+  max_members        Int
+  created_by         Int
+  created_at         DateTime             @default(now())
+  join_code          String?              @unique
+  availability       availability[]
+  notification       notification[]
+  user               user                 @relation(fields: [created_by], references: [user_id], map: "Group_created_by_fkey")
+  groupmember        groupmember[]
+  scheduled_activity scheduled_activity[]
 
   @@index([created_by], map: "Group_created_by_fkey")
 }
@@ -82,33 +84,34 @@ model groupmember {
 
 model notification {
   notification_id Int      @id @default(autoincrement())
-  user_id        Int      
-  group_id       Int      
-  message        String   
-  is_read        Boolean  @default(false)
-  created_at     DateTime @default(now())
-  user           user     @relation(fields: [user_id], references: [user_id], map: "Notification_user_id_fkey")
-  group          group    @relation(fields: [group_id], references: [group_id], map: "Notification_group_id_fkey")
+  user_id         Int
+  group_id        Int
+  message         String
+  is_read         Boolean  @default(false)
+  created_at      DateTime @default(now())
+  user            user     @relation(fields: [user_id], references: [user_id], map: "Notification_user_id_fkey")
+  group           group    @relation(fields: [group_id], references: [group_id], map: "Notification_group_id_fkey")
 
   @@index([user_id], map: "Notification_user_id_fkey")
   @@index([group_id], map: "Notification_group_id_fkey")
 }
 
 model user {
-  user_id                               Int            @id @default(autoincrement())
-  email                                 String         @unique(map: "User_email_key")
+  user_id                               Int                  @id @default(autoincrement())
+  email                                 String               @unique(map: "User_email_key")
   password                              String
   name                                  String
-  created_at                            DateTime       @default(now())
-  profile_image                         String?        @db.LongText
+  created_at                            DateTime             @default(now())
+  profile_image                         String?              @db.LongText
   availability                          availability[]
   budget                                budget[]
-  friendship_friendship_friend_idTouser friendship[]   @relation("friendship_friend_idTouser")
-  friendship_friendship_user_idTouser   friendship[]   @relation("friendship_user_idTouser")
+  friendship_friendship_friend_idTouser friendship[]         @relation("friendship_friend_idTouser")
+  friendship_friendship_user_idTouser   friendship[]         @relation("friendship_user_idTouser")
   notification                          notification[]
   group                                 group[]
   groupmember                           groupmember[]
   useractivity                          useractivity[]
+  scheduled_activity                    scheduled_activity[]
 }
 
 model useractivity {
@@ -123,20 +126,19 @@ model useractivity {
 }
 
 model scheduled_activity {
-  scheduled_id    Int      @id @default(autoincrement())
-  group_id        Int
-  activity_id     Int
-  start_datetime  DateTime
-  end_datetime    DateTime
-  status          String?  @db.VarChar(191)
-  created_at      DateTime @default(now())
-  created_by      Int
-  group           group    @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
-  activity        activity @relation(fields: [activity_id], references: [activity_id])
-  user            user     @relation(fields: [created_by], references: [user_id])
+  scheduled_id   Int      @id @default(autoincrement())
+  group_id       Int
+  activity_id    Int
+  start_datetime DateTime
+  end_datetime   DateTime
+  status         String?  @db.VarChar(191)
+  created_at     DateTime @default(now())
+  created_by     Int
+  group          group    @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  activity       activity @relation(fields: [activity_id], references: [activity_id])
+  user           user     @relation(fields: [created_by], references: [user_id])
 
   @@index([group_id])
   @@index([activity_id])
   @@index([created_by])
 }
-

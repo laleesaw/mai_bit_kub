@@ -271,10 +271,13 @@
     right: 0px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     z-index: 99;
     animation: fadeInUp 0.3s ease;
     background-color: rgba(255, 251, 222, 0.5);
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
 }
 
 .group-list-container .create-join{
@@ -297,46 +300,38 @@
 }
 
 .group-list-container .fab-menu-item {
-    padding: 10px 20px;
+    padding: 15px 40px;
     border: none;
-    border-radius: 20px;
+    border-radius: 25px;
     color: white;
-    font-size: 13px;
+    font-size: 24px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
-    min-width: 120px;
+    min-width: 250px;
     backdrop-filter: blur(80px);
-    row-gap: 20px;
+    text-align: center;
 }
 
 .group-list-container .fab-menu-item.create {
     background: rgba(234, 91, 111, 0.8);
-    font-size: 24px;
-
-
-
-
-
 }
 
 .group-list-container .fab-menu-item.create:hover {
     background: rgba(234, 91, 111, 1);
-    transform: translateX(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(234, 91, 111, 0.5);
 }
 
 .group-list-container .fab-menu-item.join {
     background: rgba(127, 143, 255, 0.75);
-
-    font-size: 24px;
 }
 
 .group-list-container .fab-menu-item.join:hover {
     background: rgba(107, 127, 234, 1);
-    transform: translateX(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(107, 127, 234, 0.5);
 }
 
