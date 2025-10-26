@@ -101,7 +101,7 @@ export default async function handler(req, res) {
                 data: {
                   user_id: member.user_id,
                   group_id,
-                  message: `${newAvail.user.name} ได้กรอก availability ในกลุ่ม ${newAvail.group.group_name} แล้ว`,
+                  message: `${newAvail.user.name} ได้เพิ่มวันว่างในกลุ่ม ${newAvail.group.group_name} แล้ว`,
                   is_read: false
                 }
               })

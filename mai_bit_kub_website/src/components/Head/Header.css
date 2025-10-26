@@ -60,6 +60,37 @@ header {
     z-index: 1000;
 }
 
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+}
+
+.notifications-header span {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.clear-notifications-btn {
+    background: none;
+    border: none;
+    color: #EA5B6F;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.clear-notifications-btn:hover {
+    background: rgba(234, 91, 111, 0.1);
+}
+
 .notification-item {
     padding: 12px;
     border-bottom: 1px solid #eee;
