@@ -66,12 +66,14 @@ function GroupAvailability() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('th-TH', { 
+    const options = { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric',
       weekday: 'long'
-    });
+    };
+    // Get the formatted date and remove all commas
+    return date.toLocaleDateString('en-US', options).replace(/,/g, '');
   };
 
   const formatTime = (dateString) => {
@@ -109,7 +111,20 @@ function GroupAvailability() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const data = await response.json();
-      setScheduledActivities(data);
+      console.log('Fetched scheduled activities:', data);
+      
+      // เช็คหาข้อมูลที่ซ้ำกัน
+      const uniqueActivities = data.filter((activity, index, self) =>
+        index === self.findIndex((a) => (
+          a.scheduled_id === activity.scheduled_id
+        ))
+      );
+      
+      if (uniqueActivities.length !== data.length) {
+        console.warn('Found duplicate activities. Original:', data.length, 'Unique:', uniqueActivities.length);
+      }
+      
+      setScheduledActivities(uniqueActivities);
     } catch (error) {
       console.error('Error fetching scheduled activities:', error);
       toast.error('เกิดข้อผิดพลาดในการโหลดกิจกรรมที่นัดไว้');
@@ -135,7 +150,7 @@ function GroupAvailability() {
       console.log('Received activities:', data.recommendedActivities);
       
       if (!data.recommendedActivities || data.recommendedActivities.length === 0) {
-        toast.info('ไม่พบกิจกรรมที่แนะนำ กรุณาให้สมาชิกเพิ่มกิจกรรมที่สนใจก่อน');
+        toast.info('No recommended activities found. Please ask members to add their interests first.');
         return;
       }
 
@@ -143,7 +158,7 @@ function GroupAvailability() {
       setShowActivityModal(true);
     } catch (error) {
       console.error('Error fetching activity recommendations:', error);
-      toast.error('เกิดข้อผิดพลาดในการโหลดกิจกรรมที่แนะนำ');
+      toast.error('Failed to load recommended activities');
     }
   };
 
@@ -177,16 +192,16 @@ function GroupAvailability() {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       await response.json();
-      toast.success(`เลือกกิจกรรม ${activity.activity_name} สำเร็จ`, {
+      toast.success(`Successfully scheduled ${activity.activity_name}`, {
         icon: "🎉"
       });
       setShowActivityModal(false);
       
-      // โหลดข้อมูลกิจกรรมที่นัดใหม่
+      // Reload scheduled activities
       fetchScheduledActivities();
     } catch (error) {
       console.error('Error scheduling activity:', error);
-      toast.error('เกิดข้อผิดพลาดในการบันทึกกิจกรรม');
+      toast.error('Failed to schedule activity');
     }
   };
 
@@ -213,7 +228,7 @@ function GroupAvailability() {
         <div className="group-details-container">
           <div className="group-details-row">
             <span>Max Members: {groupInfo.max_members}</span>
-            <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</span>
+            <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('en-US').replace(/,/g, '')}</span>
           </div>
         </div>
       )}
@@ -221,7 +236,7 @@ function GroupAvailability() {
       {/* แสดงกิจกรรมที่นัดไว้ */}
       {scheduledActivities.length > 0 && (
         <div className="scheduled-activities">
-          <h3>กิจกรรมที่นัดไว้</h3>
+          <h3>Scheduled Activities</h3>
           <div className="scheduled-activities-list">
             {scheduledActivities.map((scheduled) => (
               <div key={scheduled.scheduled_id} className="scheduled-activity-card">
@@ -234,7 +249,7 @@ function GroupAvailability() {
                   </p>
                 </div>
                 <div className="activity-meta">
-                  <span className="scheduled-by">นัดโดย: {scheduled.creator.name}</span>
+                  <span className="scheduled-by">Scheduled by: {scheduled.creator.name}</span>
                 </div>
               </div>
             ))}
@@ -289,7 +304,7 @@ function GroupAvailability() {
 
                   {/* แสดงเวลาที่ตรงกันทั้งหมด */}
                   <div className="common-times">
-                    <h4>เวลาที่ตรงกัน</h4>
+                    <h4>Match Available Date</h4>
                     {findCommonTimes(availabilities).length > 0 ? (
                       <div className="common-times-list">
                         {findCommonTimes(availabilities).map((time, idx) => (
@@ -297,7 +312,7 @@ function GroupAvailability() {
                             <div className="time-info">
                               {formatTime(time.start)} - {formatTime(time.end)}
                               <span className="member-count">
-                                ({time.members.length} members available)
+                                {time.members.length} Members Available
                               </span>
                             </div>
                             {currentUser && groupInfo && groupInfo.groupmember?.some(member => 
@@ -307,7 +322,7 @@ function GroupAvailability() {
                                 className="schedule-activity-btn"
                                 onClick={() => handleScheduleActivity(time)}
                               >
-                                เพิ่มการนัด
+                                Schedule Activity
                               </button>
                             )}
                           </div>
@@ -323,12 +338,12 @@ function GroupAvailability() {
         )}
       </div>
 
-      {/* Modal แสดงกิจกรรมที่แนะนำ */}
+      {/* Modal for recommended activities */}
       {showActivityModal && (
         <div className="activity-modal">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>🎯 กิจกรรมที่แนะนำ</h2>
+              <h2>Recommended Activities</h2>
               <button 
                 className="close-modal-icon"
                 onClick={() => setShowActivityModal(false)}
@@ -336,33 +351,34 @@ function GroupAvailability() {
                 ✕
               </button>
             </div>
-            <div className="selected-time">
-              <div className="time-icon">🕒</div>
+            {/* <div className="selected-time">
               <div className="time-details">
-                <p className="time-label">เวลาที่เลือก</p>
-                <p className="time-value">{formatTime(selectedTimeSlot.start)} - {formatTime(selectedTimeSlot.end)}</p>
-                <p className="members-available">สมาชิกว่าง {selectedTimeSlot.members.length} คน</p>
+                <div className="time-container">
+                  <p className="time-label">Selected Time</p>
+                  <p className="time-value">{formatTime(selectedTimeSlot.start)} - {formatTime(selectedTimeSlot.end)}</p>
+                </div>
+                <p className="members-available">{selectedTimeSlot.members.length} Members Available</p>
               </div>
-            </div>
+            </div> */}
             <div className="activity-list">
               {recommendedActivities.map((activity) => (
                 <div key={activity.activity_id} className="activity-item">
                   <div className="activity-header">
                     <h3>{activity.activity_name}</h3>
                     <span className="popularity-badge">
-                      {activity.popularity || 0} คนสนใจ
+                      {activity.popularity || 0} Interested
                     </span>
                   </div>
                   <div className="activity-details">
                     <div className="detail-row">
                       <span className="detail-icon">📂</span>
-                      <span className="detail-label">หมวดหมู่:</span>
+                      <span className="detail-label">Category:</span>
                       <span className="detail-value">{activity.category}</span>
                     </div>
                     <div className="detail-row">
                       <span className="detail-icon">💰</span>
-                      <span className="detail-label">งบประมาณ:</span>
-                      <span className="detail-value">{activity.min_cost.toLocaleString()} - {activity.max_cost.toLocaleString()} บาท</span>
+                      <span className="detail-label">Budget:</span>
+                      <span className="detail-value">${activity.min_cost.toLocaleString()} - ${activity.max_cost.toLocaleString()}</span>
                     </div>
                   </div>
                   <button 
@@ -370,7 +386,7 @@ function GroupAvailability() {
                     onClick={() => handleSelectActivity(activity)}
                   >
                     <span className="btn-icon">✓</span>
-                    เลือกกิจกรรมนี้
+                    Select Activity
                   </button>
                 </div>
               ))}
