@@ -283,6 +283,63 @@
   font-size: 0.8rem;
 }
 
+/* Scheduled Activities */
+.scheduled-activities {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 2px solid #4f46e5;
+}
+
+.scheduled-activities h3 {
+  font-size: 1.1rem;
+  color: #2d3748;
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.scheduled-activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.scheduled-activity-card {
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 1rem;
+  border-left: 3px solid #4f46e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scheduled-activity-card h4 {
+  color: #1e293b;
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.activity-time {
+  color: #4f46e5;
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.activity-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.scheduled-by {
+  background: #4f46e510;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .group-availability-container {

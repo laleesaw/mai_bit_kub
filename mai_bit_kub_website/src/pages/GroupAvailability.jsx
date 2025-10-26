@@ -13,6 +13,7 @@ function GroupAvailability() {
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const [scheduledActivities, setScheduledActivities] = useState([]);
 
   // Get user ID from localStorage
   useEffect(() => {
@@ -33,6 +34,7 @@ function GroupAvailability() {
     }
 
     fetchGroupAvailability();
+    fetchScheduledActivities();
   }, [groupId]);
 
 
@@ -93,6 +95,27 @@ function GroupAvailability() {
     return grouped;
   };
 
+  const fetchScheduledActivities = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/scheduled-activities?groupId=${groupId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const data = await response.json();
+      setScheduledActivities(data);
+    } catch (error) {
+      console.error('Error fetching scheduled activities:', error);
+      toast.error('เกิดข้อผิดพลาดในการโหลดกิจกรรมที่นัดไว้');
+    }
+  };
+
   const handleScheduleActivity = async (timeSlot) => {
     try {
       console.log('Opening modal for time slot:', timeSlot);
@@ -124,6 +147,49 @@ function GroupAvailability() {
     }
   };
 
+  const handleSelectActivity = async (activity) => {
+    try {
+      const formatToMySQLDatetime = (date) => {
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().slice(0, 19).replace('T', ' ');
+      };
+
+      const requestData = {
+        groupId: groupId,
+        activityId: activity.activity_id,
+        startDatetime: formatToMySQLDatetime(selectedTimeSlot.start),
+        endDatetime: formatToMySQLDatetime(selectedTimeSlot.end),
+        createdBy: currentUser.user_id
+      };
+      console.log('Sending data:', requestData);
+      
+      const response = await fetch('http://localhost:3000/api/scheduled-activities', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestData)
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      await response.json();
+      toast.success(`เลือกกิจกรรม ${activity.activity_name} สำเร็จ`, {
+        icon: "🎉"
+      });
+      setShowActivityModal(false);
+      
+      // โหลดข้อมูลกิจกรรมที่นัดใหม่
+      fetchScheduledActivities();
+    } catch (error) {
+      console.error('Error scheduling activity:', error);
+      toast.error('เกิดข้อผิดพลาดในการบันทึกกิจกรรม');
+    }
+  };
+
   const groupedData = groupByDate(groupAvailability);
 
   if (loading) {
@@ -148,6 +214,30 @@ function GroupAvailability() {
           <div className="group-details-row">
             <span>Max Members: {groupInfo.max_members}</span>
             <span>Created: {new Date(groupInfo.created_at).toLocaleDateString('th-TH')}</span>
+          </div>
+        </div>
+      )}
+
+      {/* แสดงกิจกรรมที่นัดไว้ */}
+      {scheduledActivities.length > 0 && (
+        <div className="scheduled-activities">
+          <h3>กิจกรรมที่นัดไว้</h3>
+          <div className="scheduled-activities-list">
+            {scheduledActivities.map((scheduled) => (
+              <div key={scheduled.scheduled_id} className="scheduled-activity-card">
+                <div className="activity-info">
+                  <h4>{scheduled.activity.activity_name}</h4>
+                  <p className="activity-time">
+                    {formatDate(scheduled.start_datetime)}
+                    <br />
+                    {formatTime(scheduled.start_datetime)} - {formatTime(scheduled.end_datetime)}
+                  </p>
+                </div>
+                <div className="activity-meta">
+                  <span className="scheduled-by">นัดโดย: {scheduled.creator.name}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -277,12 +367,7 @@ function GroupAvailability() {
                   </div>
                   <button 
                     className="select-activity-btn"
-                    onClick={() => {
-                      toast.success(`เลือกกิจกรรม ${activity.activity_name} สำเร็จ`, {
-                        icon: "🎉"
-                      });
-                      setShowActivityModal(false);
-                    }}
+                    onClick={() => handleSelectActivity(activity)}
                   >
                     <span className="btn-icon">✓</span>
                     เลือกกิจกรรมนี้

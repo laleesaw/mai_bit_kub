@@ -122,4 +122,21 @@ model useractivity {
   @@index([activity_id], map: "UserActivity_activity_id_fkey")
 }
 
+model scheduled_activity {
+  scheduled_id    Int      @id @default(autoincrement())
+  group_id        Int
+  activity_id     Int
+  start_datetime  DateTime
+  end_datetime    DateTime
+  status          String?  @db.VarChar(191)
+  created_at      DateTime @default(now())
+  created_by      Int
+  group           group    @relation(fields: [group_id], references: [group_id], onDelete: Cascade)
+  activity        activity @relation(fields: [activity_id], references: [activity_id])
+  user            user     @relation(fields: [created_by], references: [user_id])
+
+  @@index([group_id])
+  @@index([activity_id])
+  @@index([created_by])
+}
 
