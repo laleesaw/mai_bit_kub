@@ -11,6 +11,7 @@ function Budget() {
   const [isSaved, setIsSaved] = useState(false);
   const [minAllowed, setMinAllowed] = useState(0);
   const [showMaxNotice, setShowMaxNotice] = useState(false);
+  const [maxBelowMin, setMaxBelowMin] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
@@ -49,11 +50,6 @@ function Budget() {
     function handler(e) {
       const maxMin = e?.detail?.maxMin ?? 0;
       setMinAllowed(maxMin);
-      // do NOT auto-adjust the user's Min Budget; only warn and record the required minimum
-      const current = parseFloat(minBudget) || 0;
-      if (current < maxMin) {
-        toast.warn(`Selected activities require a minimum budget of ฿${maxMin}. Please increase your Min Budget before saving.`);
-      }
     }
 
     window.addEventListener('selectedActivitiesMinCost', handler);
@@ -66,18 +62,23 @@ function Budget() {
       return;
     }
 
-    const min = parseFloat(minBudget) || 0;
+    // Interpret inputs: if Min is empty we allow save as long as Max >= minAllowed.
     const max = parseFloat(maxBudget) || 0;
+    const min = minBudget === "" ? null : parseFloat(minBudget);
 
-    if (min < minAllowed) {
-      toast.error(`Min budget cannot be less than required ${minAllowed}`);
-      return;
-    }
+    // If user provided a Min, enforce it is < Max (Min does NOT have to meet minAllowed)
+    // if (min !== null) {
+    //   if (min >= max) {
+    //     toast.error("Min budget must be less than Max budget!");
+    //     return;
+    //   }
+    // }
 
-    if (min >= max) {
-      toast.error("Min budget must be less than Max budget!");
-      return;
-    }
+    // Require Max to meet the selected-activities minimum (so selected activities are affordable)
+    // if (max < minAllowed) {
+    //   toast.error(`Max budget must be at least ${minAllowed}`);
+    //   return;
+    // }
 
     try {
       const method = budgetId ? 'PUT' : 'POST';
@@ -121,6 +122,7 @@ function Budget() {
     // allow clearing
     if (v === "") {
       setMaxBudget("");
+      setMaxBelowMin(false);
       // notify others that budget was cleared/changed
       window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: null, minBudget: minBudget === "" ? null : Number(minBudget || 0) } }));
       return;
@@ -129,16 +131,16 @@ function Budget() {
     const num = parseFloat(v);
     if (Number.isNaN(num)) {
       setMaxBudget(v);
+      setMaxBelowMin(false);
       return;
     }
 
-    if (minAllowed && num < Number(minAllowed)) {
-      toast.warn(`Max budget cannot be less than required minimum ฿${minAllowed}`);
-      // do not accept the value
-      return;
-    }
-
+    // Accept the input (allow the user to type intermediate values). Track whether
+    // the numeric value is below the required minimum so we can show a warning on blur
     setMaxBudget(v);
+    if (minAllowed && num < Number(minAllowed)) setMaxBelowMin(true);
+    else setMaxBelowMin(false);
+
     // notify other components (Activity) about the change immediately so clearing enables selections
     window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: Number(v), minBudget: minBudget === "" ? null : Number(minBudget || 0) } }));
   };
@@ -160,10 +162,16 @@ function Budget() {
     window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { minBudget: Number(v), maxBudget: maxBudget === "" ? null : Number(maxBudget || 0) } }));
   };
 
-  const canSave = minBudget && maxBudget && parseFloat(minBudget) < parseFloat(maxBudget);
+  // Interpret numeric values
+  const maxNum = maxBudget === "" ? NaN : parseFloat(maxBudget);
+  const minNum = minBudget === "" ? null : parseFloat(minBudget);
 
-  // Save only allowed when minBudget meets activity requirement AND maxBudget is >= minAllowed
-  const canSaveWithMinAllowed = canSave && (parseFloat(minBudget) >= minAllowed) && (parseFloat(maxBudget) >= minAllowed);
+  // canSave: must have a numeric max; if min provided it must be less than max
+  const canSave = !Number.isNaN(maxNum) && (minNum === null ? true : (minNum < maxNum));
+
+  // Allow save when Max meets the required minimum from selected activities
+  // (even if Min is empty). If Min is provided, it's still required to be < Max.
+  const canSaveWithMinAllowed = canSave && (maxNum >= minAllowed);
 
   return (
     <div className="budget">
@@ -191,7 +199,10 @@ function Budget() {
             disabled={isSaved}
             min={minAllowed || undefined}
             onFocus={() => { if (minAllowed && Number(minAllowed) > 0) setShowMaxNotice(true); }}
-            onBlur={() => setShowMaxNotice(false)}
+            onBlur={() => {
+              setShowMaxNotice(false);
+              if (maxBelowMin) toast.warn(`Max budget cannot be less than required minimum ฿${minAllowed}`);
+            }}
           />
           <span className="currency">฿</span>
         </div>

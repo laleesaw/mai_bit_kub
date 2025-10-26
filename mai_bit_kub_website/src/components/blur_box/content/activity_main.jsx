@@ -322,10 +322,12 @@ function Activity() {
                 const allowByMin = userBudgetMin != null && cost != null && cost < userBudgetMin;
                 const allowByMax = userBudgetMax != null && cost != null && userBudgetMax > cost;
                 const disabled = cost != null && initialBudgetExists && !(allowByMin || allowByMax);
+                // only show selected visual when it's selected AND not disabled by budget
+                const isSelected = userActivities.has(sub.name) && !disabled;
                 return (
                   <div
                     key={idx}
-                    className={`sub_card ${userActivities.has(sub.name) ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
+                    className={`sub_card ${isSelected ? 'selected' : ''} ${disabled ? 'disabled' : ''}`}
                     onClick={() => { if (!disabled) addUserActivity(sub.name); }}
                     style={{ cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1 }}
                     title={disabled ? `Does not meet your saved budget constraints (min ${userBudgetMin || '-'}, max ${userBudgetMax || '-'})` : ''}
