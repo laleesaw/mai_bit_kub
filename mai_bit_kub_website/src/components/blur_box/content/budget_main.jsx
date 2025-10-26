@@ -6,8 +6,12 @@ import Budget_main from "../../../assets/budget_icon.png";
 function Budget() {
   const [minBudget, setMinBudget] = useState("");
   const [maxBudget, setMaxBudget] = useState("");
+  const [budgetId, setBudgetId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [minAllowed, setMinAllowed] = useState(0);
+  const [showMaxNotice, setShowMaxNotice] = useState(false);
+  const [maxBelowMin, setMaxBelowMin] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
@@ -15,25 +19,74 @@ function Budget() {
     else console.error("No userId in localStorage");
   }, []);
 
+  // Load existing budget for the user (if any) and show it (read-only until Edit)
+  useEffect(() => {
+    async function loadBudget() {
+      try {
+        const id = localStorage.getItem("userId");
+        if (!id) return;
+        const res = await fetch(`/api/budget`);
+        if (!res.ok) return;
+        const all = await res.json();
+        const mine = all.find(b => String(b.user_id) === String(id));
+        if (mine) {
+          setBudgetId(mine.budget_id || null);
+          setMinBudget(String(mine.min_budget ?? ""));
+          setMaxBudget(String(mine.max_budget ?? ""));
+          setIsSaved(true);
+          // also notify activity about existing saved budget
+          window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: Number(mine.max_budget || 0), minBudget: Number(mine.min_budget || 0) } }));
+        }
+      } catch (err) {
+        console.error('Failed to load existing budget', err);
+      }
+    }
+
+    loadBudget();
+  }, []);
+
+  // Listen for selected activities min cost to enforce minBudget
+  useEffect(() => {
+    function handler(e) {
+      const maxMin = e?.detail?.maxMin ?? 0;
+      setMinAllowed(maxMin);
+    }
+
+    window.addEventListener('selectedActivitiesMinCost', handler);
+    return () => window.removeEventListener('selectedActivitiesMinCost', handler);
+  }, [minBudget]);
+
   const handleSave = async () => {
     if (!userId) {
       toast.error("No user selected!");
       return;
     }
 
-    const min = parseFloat(minBudget) || 0;
+    // Interpret inputs: if Min is empty we allow save as long as Max >= minAllowed.
     const max = parseFloat(maxBudget) || 0;
+    const min = minBudget === "" ? null : parseFloat(minBudget);
 
-    if (min >= max) {
-      toast.error("Min budget must be less than Max budget!");
-      return;
-    }
+    // If user provided a Min, enforce it is < Max (Min does NOT have to meet minAllowed)
+    // if (min !== null) {
+    //   if (min >= max) {
+    //     toast.error("Min budget must be less than Max budget!");
+    //     return;
+    //   }
+    // }
+
+    // Require Max to meet the selected-activities minimum (so selected activities are affordable)
+    // if (max < minAllowed) {
+    //   toast.error(`Max budget must be at least ${minAllowed}`);
+    //   return;
+    // }
 
     try {
-      const res = await fetch(`http://localhost:5173/api/budget`, {
-        method: "POST",
+      const method = budgetId ? 'PUT' : 'POST';
+      const body = budgetId ? { budget_id: budgetId, min_budget: min, max_budget: max } : { user_id: userId, min_budget: min, max_budget: max };
+      const res = await fetch(`/api/budget`, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, min_budget: min, max_budget: max }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -45,6 +98,15 @@ function Budget() {
       const result = await res.json();
       console.log("Budget saved:", result);
       setIsSaved(true);
+      if (!budgetId && result?.budget_id) setBudgetId(result.budget_id);
+      // notify other components (Activity) that user's budget changed
+      try {
+        const max = Number(result.max_budget ?? max);
+        const min = Number(result.min_budget ?? min);
+        window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: max, minBudget: min } }));
+      } catch (e) {
+        // ignore
+      }
       toast.success("Budget saved successfully!");
     } catch (err) {
       console.error("Error saving budget:", err);
@@ -54,7 +116,62 @@ function Budget() {
 
   const handleEdit = () => setIsSaved(false);
 
-  const canSave = minBudget && maxBudget && parseFloat(minBudget) < parseFloat(maxBudget);
+  // Prevent user from entering a maxBudget lower than the required minimum (minAllowed).
+  const handleMaxBudgetChange = (e) => {
+    const v = e.target.value;
+    // allow clearing
+    if (v === "") {
+      setMaxBudget("");
+      setMaxBelowMin(false);
+      // notify others that budget was cleared/changed
+      window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: null, minBudget: minBudget === "" ? null : Number(minBudget || 0) } }));
+      return;
+    }
+
+    const num = parseFloat(v);
+    if (Number.isNaN(num)) {
+      setMaxBudget(v);
+      setMaxBelowMin(false);
+      return;
+    }
+
+    // Accept the input (allow the user to type intermediate values). Track whether
+    // the numeric value is below the required minimum so we can show a warning on blur
+    setMaxBudget(v);
+    if (minAllowed && num < Number(minAllowed)) setMaxBelowMin(true);
+    else setMaxBelowMin(false);
+
+    // notify other components (Activity) about the change immediately so clearing enables selections
+    window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { maxBudget: Number(v), minBudget: minBudget === "" ? null : Number(minBudget || 0) } }));
+  };
+
+  const handleMinBudgetChange = (e) => {
+    const v = e.target.value;
+    if (v === "") {
+      setMinBudget("");
+      window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { minBudget: null, maxBudget: maxBudget === "" ? null : Number(maxBudget || 0) } }));
+      return;
+    }
+    const num = parseFloat(v);
+    if (Number.isNaN(num)) {
+      setMinBudget(v);
+      return;
+    }
+
+    setMinBudget(v);
+    window.dispatchEvent(new CustomEvent('userBudgetUpdated', { detail: { minBudget: Number(v), maxBudget: maxBudget === "" ? null : Number(maxBudget || 0) } }));
+  };
+
+  // Interpret numeric values
+  const maxNum = maxBudget === "" ? NaN : parseFloat(maxBudget);
+  const minNum = minBudget === "" ? null : parseFloat(minBudget);
+
+  // canSave: must have a numeric max; if min provided it must be less than max
+  const canSave = !Number.isNaN(maxNum) && (minNum === null ? true : (minNum < maxNum));
+
+  // Allow save when Max meets the required minimum from selected activities
+  // (even if Min is empty). If Min is provided, it's still required to be < Max.
+  const canSaveWithMinAllowed = canSave && (maxNum >= minAllowed);
 
   return (
     <div className="budget">
@@ -66,10 +183,11 @@ function Budget() {
             placeholder="Min Budget"
             className="budget-min"
             value={minBudget}
-            onChange={(e) => setMinBudget(e.target.value)}
+            onChange={handleMinBudgetChange}
             disabled={isSaved}
           />
           <span className="currency">฿</span>
+
         </div>
         <div className="budget-wrapper">
           <input
@@ -77,14 +195,34 @@ function Budget() {
             placeholder="Max Budget"
             className="budget-max"
             value={maxBudget}
-            onChange={(e) => setMaxBudget(e.target.value)}
+            onChange={handleMaxBudgetChange}
             disabled={isSaved}
+            min={minAllowed || undefined}
+            onFocus={() => { if (minAllowed && Number(minAllowed) > 0) setShowMaxNotice(true); }}
+            onBlur={() => {
+              setShowMaxNotice(false);
+              if (maxBelowMin) toast.warn(`Max budget cannot be less than required minimum ฿${minAllowed}`);
+            }}
           />
           <span className="currency">฿</span>
         </div>
       </div>
+      {showMaxNotice && minAllowed > 0 ? (
+        <div className="notice" style={{ color: parseFloat(minBudget || 0) < minAllowed ? '#b00020' : '#333' }}>
+          <span>more than: {minAllowed} ฿</span>
+        </div>
+      ) : null}
+      {/* Debug panel to show budget-related state for troubleshooting */}
+      {/* <div style={{ marginTop: 8, padding: 8, background: '#f7f7f7', borderRadius: 6, fontSize: 12 }}>
+        <strong>DEBUG</strong>
+        <div>minBudget: {String(minBudget)}</div>
+        <div>maxBudget: {String(maxBudget)}</div>
+        <div>minAllowed (from activities): {String(minAllowed)}</div>
+        <div>canSave: {String(canSave)}</div>
+        <div>canSaveWithMinAllowed: {String(canSaveWithMinAllowed)}</div>
+      </div> */}
       {!isSaved ? (
-        <button onClick={handleSave} disabled={!canSave} className="save-btn">
+        <button onClick={handleSave} disabled={!canSaveWithMinAllowed} className="save-btn">
           Save Budget
         </button>
       ) : (

@@ -48,7 +48,7 @@
 }
 
 .group-item {
-    background-color: rgba(234, 91, 111, 0.1);
+    background-color: rgba(255, 251, 222, 0.2);
     padding: 15px;
     border-radius: 16px;
     cursor: pointer;
@@ -89,13 +89,13 @@
 
 .generate-code-btn {
     padding: 8px 14px;
-    background: rgba(107, 127, 234, 0.4);
+    background: rgba(107, 127, 234, 0.8);
     backdrop-filter: blur(10px);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 24px;
     font-weight: 600;
     transition: all 0.3s ease;
     align-self: stretch;
@@ -104,7 +104,7 @@
 }
 
 .generate-code-btn:hover {
-    background: rgba(107, 127, 234, 0.55);
+    background: rgba(107, 127, 234, 1);
     transform: translateY(-2px);
     box-shadow: 0 5px 18px rgba(107, 127, 234, 0.4);
 }
@@ -219,22 +219,23 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(107, 127, 234, 0.5);
 }
-
-/* Floating Action Button ใน GroupList */
-.group-list-container .fab-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+.fab-button img {
     width: 50px;
     height: 50px;
+}
+/* Floating Action Button ใน GroupList */
+.group-list-container .fab-button {
+    position:absolute;
+    bottom: 50px;
+    right: 50px;
+    width: 0px;
+    height: 0px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #EA5B6F, #ff6b7f);
     color: white;
     border: none;
     font-size: 40px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(234, 91, 111, 0.4);
     transition: all 0.3s ease;
     z-index: 100;
     display: flex;
@@ -257,17 +258,32 @@
     transform: scale(0.95) rotate(90deg);
 }
 
+
 /* FAB Menu ใน GroupList */
+
+
 .group-list-container .fab-menu {
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(10px);
     position: absolute;
-    bottom: 80px;
-    right: 20px;
+    bottom: 0px;
+    right: 0px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     z-index: 99;
     animation: fadeInUp 0.3s ease;
+    background-color: rgba(255, 251, 222, 0.5);
 }
+
+.group-list-container .create-join{
+    position: absolute;
+    display: grid;
+    row-gap: 10px;
+    bottom: 80px;
+}
+
 
 @keyframes fadeInUp {
     from {
@@ -292,25 +308,34 @@
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
     min-width: 120px;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(80px);
+    row-gap: 20px;
 }
 
 .group-list-container .fab-menu-item.create {
-    background: rgba(234, 91, 111, 0.6);
+    background: rgba(234, 91, 111, 0.8);
+    font-size: 24px;
+
+
+
+
+
 }
 
 .group-list-container .fab-menu-item.create:hover {
-    background: rgba(255, 107, 127, 0.75);
+    background: rgba(234, 91, 111, 1);
     transform: translateX(-5px);
     box-shadow: 0 5px 15px rgba(234, 91, 111, 0.5);
 }
 
 .group-list-container .fab-menu-item.join {
-    background: rgba(107, 127, 234, 0.6);
+    background: rgba(127, 143, 255, 0.75);
+
+    font-size: 24px;
 }
 
 .group-list-container .fab-menu-item.join:hover {
-    background: rgba(127, 143, 255, 0.75);
+    background: rgba(107, 127, 234, 1);
     transform: translateX(-5px);
     box-shadow: 0 5px 15px rgba(107, 127, 234, 0.5);
 }

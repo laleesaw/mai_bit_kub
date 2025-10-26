@@ -10,7 +10,8 @@ datasource db {
 model activity {
   activity_id   Int            @id @default(autoincrement())
   activity_name String
-  cost          Float
+  max_cost      Float
+  min_cost      Float
   category      String
   useractivity  useractivity[]
 }
@@ -98,8 +99,8 @@ model user {
   email                                 String         @unique(map: "User_email_key")
   password                              String
   name                                  String
-  profile_image                         String?        @db.LongText
   created_at                            DateTime       @default(now())
+  profile_image                         String?        @db.LongText
   availability                          availability[]
   budget                                budget[]
   friendship_friendship_friend_idTouser friendship[]   @relation("friendship_friend_idTouser")
@@ -120,3 +121,5 @@ model useractivity {
   @@id([user_id, activity_id])
   @@index([activity_id], map: "UserActivity_activity_id_fkey")
 }
+
+

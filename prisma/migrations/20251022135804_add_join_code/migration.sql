@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `Group` ADD COLUMN `join_code` VARCHAR(191) NULL;
+ALTER TABLE `group` ADD COLUMN `join_code` VARCHAR(191) NULL;
 
 -- CreateIndex
-CREATE UNIQUE INDEX `Group_join_code_key` ON `Group`(`join_code`);
+CREATE UNIQUE INDEX `group_join_code_key` ON `group`(`join_code`);
