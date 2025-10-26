@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./available_main.css";
 import { toast } from 'react-toastify';
 
 function Available() {
+  const navigate = useNavigate();
+  
   // เดือนปัจจุบัน
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -25,6 +28,10 @@ function Available() {
   
   // เก็บเวลาที่เคยเลือกไว้แล้ว
   const [existingAvailabilities, setExistingAvailabilities] = useState([]);
+
+  // State สำหรับ View Availability dropdown
+  const [showGroupsDropdown, setShowGroupsDropdown] = useState(false);
+  const groupsDropdownRef = useRef(null);
 
   // ฟังก์ชันตรวจสอบว่าช่วงเวลานี้ถูกเลือกไว้แล้วหรือไม่
   const isTimeSlotExisting = (date, timeSlot) => {
@@ -147,6 +154,21 @@ function Available() {
 
     fetchGroups();
   }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (groupsDropdownRef.current && !groupsDropdownRef.current.contains(event.target)) {
+        setShowGroupsDropdown(false);
+      }
+    }
+    if (showGroupsDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showGroupsDropdown]);
 
   // ตรวจสอบเวลาที่ซ้ำกัน
   const checkOverlap = async (userId, groupId, startTime, endTime) => {
@@ -316,13 +338,51 @@ function Available() {
   return (
     <div className="display-calendar">
       <div className="calendar-layout">
-        {/* แถบเดือนซ้าย */}
-        <div className="month-selector">
-          <button onClick={handlePrevMonth} className="arrow-btn">▲</button>
-          <div className="month-name">
-            {currentMonth.toLocaleString("eng", { month: "long", year: "numeric" })}
+        {/* แถบเดือนซ้าย และปุ่ม View Availability */}
+        <div className="month-column">
+          <div className="month-selector">
+            <button onClick={handlePrevMonth} className="arrow-btn">▲</button>
+            <div className="month-name">
+              {currentMonth.toLocaleString("eng", { month: "long", year: "numeric" })}
+            </div>
+            <button onClick={handleNextMonth} className="arrow-btn">▼</button>
           </div>
-          <button onClick={handleNextMonth} className="arrow-btn">▼</button>
+
+          {/* View Availability Button */}
+          <div className="view-availability-container" ref={groupsDropdownRef}>
+            <button 
+              className="view-availability-btn"
+              onClick={() => setShowGroupsDropdown(!showGroupsDropdown)}
+            >
+              View Availability
+            </button>
+            {showGroupsDropdown && (
+              <div className="view-availability-dropdown">
+                <div className="dropdown-header">Select Group</div>
+                {groups.length > 0 ? (
+                  groups.map(group => (
+                    <div
+                      key={group.id}
+                      className="dropdown-group-item"
+                      onClick={() => {
+                        navigate('/group-availability', { 
+                          state: { groupId: group.id } 
+                        });
+                        setShowGroupsDropdown(false);
+                      }}
+                    >
+                      <span className="group-name">{group.group_name}</span>
+                      <span className="group-members">
+                        {group.current_members}/{group.max_members}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="dropdown-no-groups">No groups available</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ปฏิทินวันตรงกลาง */}

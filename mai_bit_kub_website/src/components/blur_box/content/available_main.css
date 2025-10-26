@@ -23,7 +23,7 @@
   justify-content: center; /* กลางแนวนอน */
   width: 100%;
   height: auto;
-  overflow: hidden;        /* ลบ scroll หลัก */
+  overflow: visible;
 }
 
 /* ==========================
@@ -39,6 +39,123 @@
 }
 
 /* ==========================
+   คอลัมน์เดือน + ปุ่ม View Availability
+========================== */
+.month-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 180px;
+}
+
+/* ==========================
+   View Availability Button - ใต้เดือน
+========================== */
+.view-availability-container {
+  width: 100%;
+  position: relative;
+  z-index: 100;
+}
+
+.view-availability-btn {
+  padding: 12px 16px;
+  background: rgba(234, 91, 111, 0.9);
+  backdrop-filter: blur(10px);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-availability-btn:hover {
+  background: rgba(234, 91, 111, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.view-availability-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideDown 0.2s ease;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.view-availability-dropdown .dropdown-header {
+  padding: 12px 16px;
+  background: rgba(234, 91, 111, 0.1);
+  font-weight: bold;
+  color: #EA5B6F;
+  border-bottom: 1px solid rgba(234, 91, 111, 0.2);
+}
+
+.view-availability-dropdown .dropdown-group-item {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.view-availability-dropdown .dropdown-group-item:last-child {
+  border-bottom: none;
+}
+
+.view-availability-dropdown .dropdown-group-item:hover {
+  background: rgba(234, 91, 111, 0.1);
+}
+
+.view-availability-dropdown .group-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.view-availability-dropdown .group-members {
+  font-size: 0.85em;
+  color: #666;
+  background: rgba(234, 91, 111, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.view-availability-dropdown .dropdown-no-groups {
+  padding: 16px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+/* ==========================
    แถบเดือนซ้าย
 ========================== */
 .month-selector {
@@ -46,13 +163,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 180px;
+  width: 100%;
   border-radius: 16px;
   backdrop-filter: blur(12px);
   background-color: rgba(234, 91, 111, 0.16);
-  padding: 12px;
-  position: sticky; /* ไม่ scroll ตาม */
-  top: 0;
+  padding: 0px;
   height: fit-content;
 }
 

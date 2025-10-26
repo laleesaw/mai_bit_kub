@@ -201,44 +201,6 @@ function Header(){
 
             {/* ปุ่มด้านขวา */}
             <div className="button_bar">
-                {/* Dropdown สำหรับดู Group Availability - แสดงเฉพาะในหน้า main_page */}
-                {isSignedIn && isMainPage && (
-                    <div className="groups-dropdown-container" ref={groupsDropdownRef}>
-                        <button 
-                            className="view-availability-btn"
-                            onClick={() => setShowGroupsDropdown(!showGroupsDropdown)}
-                        >
-                            📅 View Availability
-                        </button>
-                        {showGroupsDropdown && (
-                            <div className="groups-dropdown-menu">
-                                <div className="dropdown-header">Select Group</div>
-                                {userGroups.length > 0 ? (
-                                    userGroups.map(group => (
-                                        <div
-                                            key={group.id}
-                                            className="dropdown-group-item"
-                                            onClick={() => {
-                                                navigate('/group-availability', { 
-                                                    state: { groupId: group.id } 
-                                                });
-                                                setShowGroupsDropdown(false);
-                                            }}
-                                        >
-                                            <span className="group-name">{group.group_name}</span>
-                                            <span className="group-members">
-                                                {group.current_members}/{group.max_members}
-                                            </span>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="dropdown-no-groups">No groups available</div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
-                
                 <div 
                     onClick={() => {
                         if (isSignedIn) {
